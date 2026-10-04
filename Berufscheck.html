@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Berufs-Check – Welcher Beruf passt zu mir?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F2F5F9; --card:#FFFFFF; --ink:#13315C; --muted:#4F6180; --line:#D3DCE8;
+  --marker:#FFD23F; --marker-ink:#13315C; --accent:#1B5FAA; --on-accent:#FFFFFF;
+  --mint:#2E8F6E; --mint-soft:#DDF1E9; --focus:#1B5FAA;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1B2D; --card:#172740; --ink:#EAF0F8; --muted:#A9B8CE; --line:#2B3F5E;
+    --marker:#F2C230; --marker-ink:#13213A; --accent:#78AEF2; --on-accent:#0F1B2D;
+    --mint:#5CC9A2; --mint-soft:#18392F; --focus:#F2C230;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1B2D; --card:#172740; --ink:#EAF0F8; --muted:#A9B8CE; --line:#2B3F5E;
+  --marker:#F2C230; --marker-ink:#13213A; --accent:#78AEF2; --on-accent:#0F1B2D;
+  --mint:#5CC9A2; --mint-soft:#18392F; --focus:#F2C230;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:700px;margin:0 auto;padding:18px 18px 56px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{font-weight:700;font-size:1rem;display:flex;align-items:center;gap:8px}
+.brand span.dot{display:inline-block;width:14px;height:14px;border-radius:4px;background:var(--marker);transform:rotate(-8deg)}
+.top small{color:var(--muted);font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px}
+h1{font-size:2.1rem;line-height:1.15;margin:0 0 14px}
+h2{font-size:1.4rem;line-height:1.25;margin:0 0 10px}
+p{margin:0 0 14px}
+.muted{color:var(--muted)}
+.mark{background:linear-gradient(transparent 55%,var(--marker) 55%);padding:0 2px}
+.feat{list-style:none;padding:0;margin:18px 0 24px;display:grid;gap:10px}
+.feat li{display:flex;gap:12px;align-items:flex-start}
+.feat .em{font-size:1.35rem;line-height:1.3}
+button{font:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.btn{font-weight:700;padding:14px 22px;border-radius:12px;border:2px solid transparent;cursor:pointer;min-height:54px}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.part{font-weight:700;color:var(--muted);font-size:.95rem;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px}
+.progress{height:12px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.progress>div{height:100%;background:var(--marker);border-right:3px solid var(--ink);transition:width .35s ease}
+.qhead{display:flex;gap:14px;align-items:flex-start}
+.qem{font-size:2.2rem;line-height:1.1}
+.q{font-size:1.55rem;font-weight:700;line-height:1.3;margin:0}
+.q:focus{outline:none}
+.hint{color:var(--muted);margin:8px 0 0}
+.speak{margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:transparent;border:2px solid var(--line);color:var(--ink);border-radius:99px;padding:6px 14px;cursor:pointer;font-size:.95rem}
+.speak:hover{border-color:var(--ink)}
+.opts{display:grid;gap:10px;margin-top:20px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:13px 16px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;min-height:60px;transition:background .15s,border-color .15s}
+.opt:hover{border-color:var(--ink)}
+.opt .em{font-size:1.45rem;width:1.9rem;text-align:center;flex:none}
+.opt .box{margin-left:auto;flex:none;width:26px;height:26px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:.95rem}
+.opt.single .box{border-radius:50%}
+.opt[aria-pressed="true"]{background:var(--marker);color:var(--marker-ink);border-color:var(--marker-ink)}
+.opt[aria-pressed="true"] .box{border-color:var(--marker-ink);background:var(--marker-ink);color:var(--marker)}
+input[type=text]{width:100%;margin-top:20px;padding:15px 16px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:26px;flex-wrap:wrap}
+.skip{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:8px 4px}
+/* Ergebnis */
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.jobs{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:14px}
+.job{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.job:first-child{border:2px solid var(--ink)}
+.rank{font-size:2.3rem;font-weight:700;line-height:1;min-width:2.2ch;text-align:center;color:var(--ink)}
+.job:nth-child(-n+3) .rank{background:linear-gradient(transparent 50%,var(--marker) 50%)}
+.job h3{margin:0 0 4px;font-size:1.25rem;line-height:1.3}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 10px}
+.tag{font-size:.82rem;font-weight:700;padding:3px 10px;border-radius:99px;border:1.5px solid var(--line);color:var(--muted)}
+.tag.fit{background:var(--mint-soft);color:var(--mint);border-color:transparent}
+.why{margin:0 0 6px}
+.what{margin:0 0 10px;color:var(--muted);font-size:.95rem}
+.note{font-size:.9rem;color:var(--muted);margin:0 0 10px}
+.search{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--accent);text-decoration:none;border-bottom:2px solid currentColor;padding-bottom:1px;font-size:.95rem}
+.box-info{margin-top:26px;padding:20px;border-radius:14px;background:var(--mint-soft)}
+.box-info h2{color:var(--ink)}
+.box-info ol{margin:0;padding-left:1.3em;display:grid;gap:8px}
+.dream{margin-top:14px;padding:14px 16px;border-left:5px solid var(--marker);background:var(--bg);border-radius:0 10px 10px 0}
+details{margin-top:26px;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+summary{cursor:pointer;font-weight:700}
+textarea{width:100%;min-height:280px;margin-top:12px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.45}
+.foot{margin-top:24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.langsel{display:inline-flex;align-items:center;gap:6px;font-size:.95rem}
+.langsel select{font:inherit;font-size:.9rem;padding:6px 8px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);max-width:11rem}
+.langpick{margin:6px 0 18px;padding:16px;border-radius:14px;background:var(--bg)}
+.lp-label{font-weight:700;margin:0 0 10px}
+.lp-row{display:flex;flex-wrap:wrap;gap:8px}
+.lp{font-size:.95rem;padding:8px 14px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.lp.on{background:var(--marker);color:var(--marker-ink);border-color:var(--marker-ink);font-weight:700}
+.tr{margin:8px 0 0;color:var(--accent);font-size:1.08rem;line-height:1.5}
+.langpick .tr{margin-top:14px}
+.trh{color:var(--accent);opacity:.85}
+.ot{display:flex;flex-direction:column;gap:2px}
+.otr{font-size:.88rem;color:var(--muted)}
+.opt[aria-pressed="true"] .otr{color:var(--marker-ink);opacity:.8}
+[dir="rtl"]{text-align:right}
+.fitrow{display:flex;align-items:center;gap:10px;margin:4px 0 6px;font-size:.95rem}
+.fitbar{flex:1;max-width:220px;height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.fitbar>div{height:100%;background:var(--mint)}
+.sim{font-size:.95rem;margin:0 0 10px}
+.extra{margin-top:28px}
+.extra h2{margin-bottom:4px}
+.fields{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:12px}
+.fields li{display:grid;grid-template-columns:2rem 1fr auto;column-gap:10px;row-gap:5px;align-items:center}
+.fields .fe{font-size:1.3rem}
+.fields .fitbar{grid-column:2/4;max-width:none}
+.more{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.more li{display:grid;grid-template-columns:2.6rem 1fr auto;gap:10px;align-items:center;padding:11px 14px;border-top:1px solid var(--line)}
+.more li:first-child{border-top:none}
+.more .mr{font-weight:700;color:var(--muted)}
+.more small{font-size:.85rem}
+.pdfbox{margin-top:22px;padding:20px;border:2px dashed var(--ink);border-radius:14px}
+.pdfbox h2{margin-bottom:12px}
+.pdfbox label{font-weight:700;display:block}
+.pdfbox input[type=text]{margin:8px 0 14px}
+.pdfbox p{margin:12px 0 0}
+@media (max-width:480px){
+  body{font-size:18px}
+  h1{font-size:1.8rem}
+  .q{font-size:1.35rem}
+  .card{padding:22px 16px}
+  .job{padding:16px 14px;gap:12px}
+  .rank{font-size:1.9rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><span class="dot" aria-hidden="true"></span>Berufs-Check</div>
+    <label class="langsel"><span aria-hidden="true">🌐</span><span class="sr">Übersetzung</span><select id="lang" aria-label="Übersetzung / Translation"></select></label>
+  </div>
+  <main id="app" class="card" aria-live="polite"></main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ---------- Fragen ---------- */
+const YN=[{v:'ja',t:'Ja',e:'👍'},{v:'bisschen',t:'Ein bisschen',e:'🤏'},{v:'nein',t:'Nein',e:'👎'},{v:'weissnicht',t:'Weiß ich nicht',e:'🤷'}];
+const YNV={ja:2,bisschen:1,nein:-1,weissnicht:0};
+const JN=[{v:'ja',t:'Ja',e:'✅'},{v:'nein',t:'Nein',e:'❌'}];
+const TEILE=['Über dich','Das mag ich','Das kann ich','So möchte ich arbeiten','Meine Wünsche'];
+
+const Q=[
+ {id:'sprache',teil:0,e:'🗣️',q:'Wie gut sprichst du Deutsch?',type:'single',opts:[{v:'sehr',t:'Sehr gut',e:'⭐'},{v:'gut',t:'Gut',e:'🙂'},{v:'bisschen',t:'Ein bisschen',e:'🤏'},{v:'wenig',t:'Noch wenig',e:'🌱'}]},
+ {id:'sprachen',teil:0,e:'🌍',q:'Welche Sprachen sprichst du?',hint:'Wähle alle Sprachen, die du sprichst, auch Deutsch.',type:'multi',opts:[{v:'deutsch',t:'Deutsch',e:'💬'},{v:'englisch',t:'Englisch',e:'💬'},{v:'chinesisch',t:'Chinesisch',e:'💬'},{v:'hindi',t:'Hindi',e:'💬'},{v:'spanisch',t:'Spanisch',e:'💬'},{v:'franzoesisch',t:'Französisch',e:'💬'},{v:'arabisch',t:'Arabisch',e:'💬'},{v:'bengalisch',t:'Bengalisch',e:'💬'},{v:'portugiesisch',t:'Portugiesisch',e:'💬'},{v:'russisch',t:'Russisch',e:'💬'},{v:'urdu',t:'Urdu',e:'💬'},{v:'andere',t:'Eine andere Sprache',e:'➕'}]},
+ {id:'ort',teil:0,e:'📍',q:'In welchem Ort wohnst du?',hint:'Zum Beispiel: Nürnberg. Das brauchst du später für die Suche.',type:'text',ph:'Dein Ort'},
+ {id:'wohngegend',teil:0,e:'🏘️',q:'Wohnst du eher in der Stadt oder auf dem Land?',type:'single',opts:[{v:'stadt',t:'In einer großen Stadt',e:'🏙️'},{v:'klein',t:'In einer kleinen Stadt',e:'🏘️'},{v:'dorf',t:'In einem Dorf',e:'🌾'}]},
+ {id:'mobil',teil:0,e:'🚌',q:'Wie kommst du zur Arbeit?',hint:'Du kannst mehrere Antworten wählen.',type:'multi',opts:[{v:'fuss',t:'Zu Fuß',e:'🚶'},{v:'rad',t:'Mit dem Fahrrad',e:'🚲'},{v:'bus',t:'Mit Bus oder Bahn',e:'🚌'},{v:'roller',t:'Mit Roller oder Moped',e:'🛵'},{v:'auto',t:'Mit dem Auto',e:'🚗'}]},
+ {id:'dauer',teil:0,e:'⏱️',q:'Wie lange darf der Weg zur Arbeit dauern?',type:'single',opts:[{v:'15',t:'Bis 15 Minuten',e:'⏱️'},{v:'30',t:'Bis 30 Minuten',e:'⏱️'},{v:'60',t:'Bis 1 Stunde',e:'⏱️'}]},
+ {id:'fuehrerschein',teil:0,e:'🪪',q:'Hast du einen Führerschein für das Auto?',hint:'Das ist der Führerschein Klasse B.',type:'single',opts:[{v:'ja',t:'Ja',e:'✅'},{v:'gerade',t:'Ich mache ihn gerade',e:'🚦'},{v:'nein',t:'Nein',e:'❌'}]},
+ {id:'alter18',teil:0,e:'🎂',q:'Bist du schon 18 Jahre alt?',hint:'Manche Berufe darf man erst ab 18 machen.',type:'single',opts:JN},
+
+ {id:'abschluss',teil:0,e:'🎓',q:'Welchen Schulabschluss hast du oder machst du gerade?',hint:'Wähle das, was am besten passt.',type:'single',opts:[{v:'keinen',t:'Noch keinen',e:'🌱'},{v:'ms',t:'Mittelschulabschluss (Hauptschulabschluss)',e:'📄'},{v:'quali',t:'Qualifizierender Abschluss (Quali)',e:'📑'},{v:'mittlere',t:'Mittlere Reife',e:'🎓'},{v:'weissnicht',t:'Weiß ich nicht',e:'🤷'}]},
+ {id:'haende',teil:1,e:'✋',q:'Arbeitest du gerne mit den Händen?',hint:'Zum Beispiel: bauen, reparieren, basteln.',type:'single',opts:YN},
+ {id:'menschen',teil:1,e:'💬',q:'Magst du es, mit anderen Menschen zu sprechen?',hint:'Auch mit Menschen, die du nicht kennst.',type:'single',opts:YN},
+ {id:'helfen',teil:1,e:'🤝',q:'Hilfst du gerne anderen Menschen?',hint:'Zum Beispiel alten oder kranken Menschen oder Kindern.',type:'single',opts:YN},
+ {id:'kinder',teil:1,e:'🧸',q:'Bist du gerne mit Kindern zusammen?',type:'single',opts:YN},
+ {id:'essen',teil:1,e:'🍳',q:'Kochst du gerne oder macht dir Essen Spaß?',type:'single',opts:YN},
+ {id:'sauber',teil:1,e:'🧽',q:'Macht es dir nichts aus, zu putzen und aufzuräumen?',type:'single',opts:YN},
+ {id:'schmutz',teil:1,e:'🪣',q:'Macht es dir nichts aus, wenn du bei der Arbeit schmutzig wirst?',hint:'Zum Beispiel mit Farbe, Öl, Erde oder Staub.',type:'single',opts:YN},
+ {id:'technik',teil:1,e:'⚙️',q:'Interessierst du dich für Maschinen, Autos oder Technik?',type:'single',opts:YN},
+ {id:'draussen',teil:1,e:'🌦️',q:'Bist du gerne draußen, auch wenn es regnet oder kalt ist?',type:'single',opts:YN},
+ {id:'natur',teil:1,e:'🌻',q:'Magst du Pflanzen und Natur?',hint:'Zum Beispiel: Blumen, Bäume, Gärten.',type:'single',opts:YN},
+ {id:'tiere',teil:1,e:'🐶',q:'Magst du Tiere?',hint:'Zum Beispiel: Hunde, Katzen, Pferde, Kühe.',type:'single',opts:YN},
+ {id:'verkauf',teil:1,e:'🛍️',q:'Verkaufst du gerne Dinge oder berätst du gerne andere?',hint:'Beraten heißt: Du erklärst jemandem, was gut für ihn ist.',type:'single',opts:YN},
+ {id:'fahren',teil:1,e:'🚐',q:'Fährst du gerne?',hint:'Zum Beispiel Auto, Roller oder Fahrrad.',type:'single',opts:YN},
+ {id:'ordnung',teil:1,e:'📦',q:'Magst du Ordnung?',hint:'Zum Beispiel: Dinge sortieren, zählen und an den richtigen Platz legen.',type:'single',opts:YN},
+ {id:'kreativ',teil:1,e:'🎨',q:'Bist du gerne kreativ?',hint:'Zum Beispiel: malen, gestalten, Haare machen.',type:'single',opts:YN},
+ {id:'mode',teil:1,e:'👗',q:'Interessierst du dich für Mode, Kleidung oder Beauty?',type:'single',opts:YN},
+ {id:'pc',teil:1,e:'💻',q:'Arbeitest du lieber am Computer oder lieber praktisch?',hint:'Praktisch heißt: Du arbeitest mit den Händen oder bist viel unterwegs.',type:'single',opts:[{v:'computer',t:'Lieber am Computer',e:'💻'},{v:'praktisch',t:'Lieber praktisch',e:'🛠️'},{v:'beides',t:'Beides ist gut',e:'🔄'},{v:'weissnicht',t:'Weiß ich nicht',e:'🤷'}]},
+ {id:'team',teil:1,e:'👥',q:'Arbeitest du lieber im Team oder allein?',type:'single',opts:[{v:'team',t:'Im Team',e:'👥'},{v:'allein',t:'Allein',e:'🧍'},{v:'beides',t:'Beides ist gut',e:'🔄'}]},
+
+ {id:'routine',teil:1,e:'🔁',q:'Machst du lieber jeden Tag das Gleiche oder lieber etwas Neues?',type:'single',opts:[{v:'gleich',t:'Lieber jeden Tag das Gleiche',e:'🔁'},{v:'abwechslung',t:'Lieber jeden Tag etwas anderes',e:'🎲'},{v:'egal',t:'Beides ist gut',e:'🔄'}]},
+ {id:'staerken',teil:2,e:'💪',q:'Was kannst du gut?',hint:'Du kannst mehrere Antworten wählen.',type:'multi',opts:[{v:'puenktlich',t:'Pünktlich sein',e:'⏰'},{v:'freundlich',t:'Freundlich sein',e:'😊'},{v:'schnell',t:'Schnell arbeiten',e:'⚡'},{v:'genau',t:'Genau arbeiten',e:'🎯'},{v:'zuhoeren',t:'Gut zuhören',e:'👂'},{v:'stress',t:'Ruhig bleiben bei Stress',e:'🧘'},{v:'fit',t:'Körperlich fit und stark sein',e:'🏋️'},{v:'geduldig',t:'Geduldig sein',e:'🐢'},{v:'geschickt',t:'Geschickt mit den Händen sein',e:'🖐️'},{v:'zuverlaessig',t:'Zuverlässig sein',e:'🤞'},{v:'hilfsbereit',t:'Hilfsbereit sein',e:'💛'}]},
+ {id:'faecher',teil:2,e:'📚',q:'Welche Schulfächer magst du?',hint:'Du kannst mehrere Antworten wählen.',type:'multi',opts:[{v:'deutsch',t:'Deutsch',e:'📖'},{v:'mathe',t:'Mathe',e:'➗'},{v:'englisch',t:'Englisch',e:'🇬🇧'},{v:'sport',t:'Sport',e:'⚽'},{v:'kunst',t:'Kunst',e:'🎨'},{v:'werken',t:'Werken oder Technik',e:'🔧'},{v:'hauswirtschaft',t:'Kochen oder Hauswirtschaft',e:'🍲'},{v:'bio',t:'Biologie',e:'🌱'},{v:'informatik',t:'Computer oder Informatik',e:'💻'},{v:'wirtschaft',t:'Wirtschaft oder Büro',e:'📊'},{v:'ethik',t:'Ethik, Religion oder Sozialkunde',e:'🤲'},{v:'keins',t:'Keins davon',e:'🤷',ex:true}]},
+ {id:'rechnen',teil:2,e:'🔢',q:'Wie gut kannst du rechnen?',hint:'Zum Beispiel mit Geld an der Kasse.',type:'single',opts:[{v:'gut',t:'Gut',e:'👍'},{v:'geht',t:'Geht so',e:'🤏'},{v:'schwer',t:'Das fällt mir schwer',e:'😕'}]},
+ {id:'schreiben',teil:2,e:'✍️',q:'Wie gut kannst du auf Deutsch lesen und schreiben?',type:'single',opts:[{v:'gut',t:'Gut',e:'👍'},{v:'geht',t:'Geht so',e:'🤏'},{v:'schwer',t:'Das fällt mir schwer',e:'😕'}]},
+ {id:'pcskill',teil:2,e:'🖱️',q:'Wie gut kannst du mit dem Computer umgehen?',hint:'Zum Beispiel: E-Mails schreiben, im Internet suchen, Word benutzen.',type:'single',opts:[{v:'gut',t:'Gut',e:'👍'},{v:'geht',t:'Geht so',e:'🤏'},{v:'wenig',t:'Noch wenig',e:'🌱'}]},
+ {id:'schwer',teil:2,e:'🧗',q:'Was fällt dir schwer?',hint:'Das ist okay. Jeder Mensch findet manche Dinge schwer. Du kannst mehrere Antworten wählen.',type:'multi',opts:[{v:'stehen',t:'Lange stehen',e:'🦵'},{v:'sitzen',t:'Lange still sitzen',e:'🪑'},{v:'frueh',t:'Früh aufstehen',e:'🌅'},{v:'lesen',t:'Viel lesen und schreiben',e:'📄'},{v:'laut',t:'Laute Umgebung',e:'🔊'},{v:'stress',t:'Stress und Zeitdruck',e:'😰'},{v:'heben',t:'Schwer heben',e:'📦'},{v:'fremde',t:'Mit fremden Menschen sprechen',e:'🙈'},{v:'nichts',t:'Nichts davon',e:'😎',ex:true}]},
+ {id:'praktikum',teil:2,e:'🏢',q:'Hast du schon einmal ein Praktikum gemacht?',type:'single',opts:JN},
+ {id:'praktikum_wo',teil:2,e:'🗺️',q:'Wo hast du dein Praktikum gemacht?',hint:'Du kannst mehrere Antworten wählen.',type:'multi',showIf:A=>A.praktikum==='ja',opts:[{v:'laden',t:'Supermarkt oder Laden',e:'🛒'},{v:'kueche',t:'Küche oder Restaurant',e:'🍽️'},{v:'pflege',t:'Pflegeheim oder Krankenhaus',e:'🏥'},{v:'kita',t:'Kita oder Kindergarten',e:'🧸'},{v:'lager',t:'Lager',e:'📦'},{v:'werkstatt',t:'Werkstatt',e:'🔧'},{v:'handwerk',t:'Handwerk oder Baustelle',e:'🧱'},{v:'fabrik',t:'Fabrik',e:'🏭'},{v:'garten',t:'Garten oder Bauernhof',e:'🌳'},{v:'reinigung',t:'Reinigung',e:'🧹'},{v:'friseur',t:'Friseur',e:'💇'},{v:'hotel',t:'Hotel',e:'🛎️'},{v:'buero',t:'Büro oder Verwaltung',e:'🖥️'},{v:'kosmetik',t:'Kosmetik- oder Nagelstudio',e:'💅'},{v:'blumen',t:'Blumenladen',e:'🌷'},{v:'autohaus',t:'Autohaus oder Autowäsche',e:'🚗'},{v:'schule',t:'Schule oder Jugendzentrum',e:'🏫'},{v:'tiere',t:'Tierheim, Zoo oder Tierarztpraxis',e:'🐶'},{v:'anderes',t:'Etwas anderes',e:'➕'}]},
+ {id:'praktikum_gefallen',teil:2,e:'❤️',q:'Hat dir das Praktikum gefallen?',type:'single',showIf:A=>A.praktikum==='ja',opts:[{v:'sehr',t:'Ja, sehr',e:'😍'},{v:'etwas',t:'Ein bisschen',e:'🙂'},{v:'nein',t:'Nein',e:'🙁'}]},
+ {id:'job',teil:2,e:'💶',q:'Hast du schon einmal gejobbt?',hint:'Zum Beispiel Minijob, Ferienjob oder Aushilfe.',type:'single',opts:JN},
+
+ {id:'koerper',teil:3,e:'🏋️',q:'Wie viel körperliche Arbeit schaffst du?',type:'single',opts:[{v:'schwer',t:'Viel: Schwer heben ist okay',e:'💪'},{v:'mittel',t:'Mittel: Viel stehen und gehen ist okay',e:'🚶'},{v:'leicht',t:'Wenig: Lieber leichte Arbeit',e:'🪶'}]},
+ {id:'gesundheit',teil:3,e:'🩺',q:'Gibt es etwas mit deiner Gesundheit, auf das wir achten sollen?',hint:'Du musst das nicht sagen. Die Antwort bleibt auf deinem Gerät.',type:'multi',opts:[{v:'ruecken',t:'Rücken oder Knie',e:'🦴'},{v:'allergie',t:'Allergie, z. B. gegen Staub, Mehl oder Putzmittel',e:'🤧'},{v:'haut',t:'Empfindliche Haut',e:'🖐️'},{v:'keine',t:'Nein, nichts',e:'✅',ex:true},{v:'privat',t:'Möchte ich nicht sagen',e:'🔒',ex:true}]},
+ {id:'zeiten',teil:3,e:'🕐',q:'Wann möchtest du arbeiten?',hint:'Du kannst mehrere Antworten wählen.',type:'multi',opts:[{v:'frueh',t:'Früh am Morgen',e:'🌅'},{v:'tag',t:'Am Tag',e:'☀️'},{v:'abends',t:'Am Abend',e:'🌆'},{v:'nachts',t:'In der Nacht',e:'🌙'}]},
+ {id:'wochenende',teil:3,e:'📅',q:'Ist Arbeit am Wochenende für dich okay?',type:'single',opts:[{v:'ja',t:'Ja',e:'✅'},{v:'manchmal',t:'Manchmal',e:'🔄'},{v:'nein',t:'Nein',e:'❌'}]},
+ {id:'schicht',teil:3,e:'🔄',q:'Ist Schichtarbeit für dich okay?',hint:'Schicht heißt: Manchmal arbeitest du früh, manchmal spät.',type:'single',opts:[{v:'ja',t:'Ja',e:'✅'},{v:'nein',t:'Nein',e:'❌'},{v:'weissnicht',t:'Weiß ich nicht',e:'🤷'}]},
+ {id:'stunden',teil:3,e:'⌛',q:'Wie viel möchtest du arbeiten?',type:'single',opts:[{v:'vollzeit',t:'Vollzeit (ungefähr 40 Stunden pro Woche)',e:'🕘'},{v:'teilzeit',t:'Teilzeit (weniger Stunden)',e:'🕒'},{v:'minijob',t:'Minijob neben der Schule',e:'💶'}]},
+ {id:'drinnen',teil:3,e:'🏠',q:'Möchtest du lieber drinnen oder draußen arbeiten?',type:'single',opts:[{v:'drinnen',t:'Drinnen',e:'🏠'},{v:'draussen',t:'Draußen',e:'🌳'},{v:'egal',t:'Beides ist gut',e:'🔄'}]},
+
+ {id:'temperatur',teil:3,e:'🌡️',q:'Ist es okay für dich, wenn es bei der Arbeit sehr warm oder kalt ist?',hint:'Zum Beispiel in einer Küche, im Kühllager oder draußen im Winter.',type:'single',opts:[{v:'ja',t:'Ja, das ist okay',e:'✅'},{v:'nein',t:'Nein, lieber nicht',e:'❌'},{v:'weissnicht',t:'Weiß ich nicht',e:'🤷'}]},
+ {id:'ausbildung',teil:4,e:'🎓',q:'Möchtest du eine Ausbildung machen oder direkt arbeiten?',hint:'Ausbildung heißt: Du lernst einen Beruf und bekommst dabei schon Geld.',type:'single',opts:[{v:'ausbildung',t:'Eine Ausbildung machen',e:'🎓'},{v:'direkt',t:'Direkt arbeiten und Geld verdienen',e:'💶'},{v:'weissnicht',t:'Weiß ich noch nicht',e:'🤷'}]},
+ {id:'wichtig',teil:4,e:'⭐',q:'Was ist dir bei der Arbeit wichtig?',hint:'Du kannst mehrere Antworten wählen.',type:'multi',opts:[{v:'geld',t:'Gutes Geld verdienen',e:'💰'},{v:'kollegen',t:'Nette Kolleginnen und Kollegen',e:'😊'},{v:'sicher',t:'Ein sicherer Arbeitsplatz',e:'🏠'},{v:'sinn',t:'Anderen helfen, etwas Sinnvolles tun',e:'💛'},{v:'lernen',t:'Viel Neues lernen',e:'📈'},{v:'nah',t:'Arbeit nah bei mir zu Hause',e:'📍'}]},
+ {id:'traum',teil:4,e:'✨',q:'Was ist dein Traumberuf?',hint:'Schreib einfach ein Wort. Zum Beispiel: Koch, Friseurin, Lager.',type:'text',ph:'Mein Traumberuf'},
+ {id:'nicht',teil:4,e:'🚫',q:'Gibt es etwas, das du auf keinen Fall machen willst?',hint:'Zum Beispiel: putzen, nachts arbeiten, mit Tieren arbeiten.',type:'text',ph:'Das will ich nicht'}
+];
+
+/* ---------- Berufe ---------- */
+const DIMS=['haende','menschen','helfen','essen','sauber','technik','draussen','natur','verkauf','fahren','ordnung','kreativ'];
+// k=körperlich 1-3, de=Deutsch nötig 1-3, re=Rechnen 0-2, we=Wochenende 0-2, sc=Schicht 0-2, fr=früh 0-2, ab=abends 0-2, na=Nacht, st=Stehen 0-2
+const JOBS=[
+ {id:'verkaeufer',n:'Verkäufer:in',typ:'A',info:'Ausbildung, 2 Jahre',s:'Verkäufer',d:{menschen:3,verkauf:3,ordnung:2,helfen:1},k:2,de:2,re:1,we:2,sc:1,fr:1,st:2,pr:['laden'],kw:['verkäuf','verkauf','laden','supermarkt','einzelhandel','shop'],w:'Du berätst Kundinnen und Kunden, räumst Ware ein und arbeitest an der Kasse.'},
+ {id:'kasse',n:'Verkaufshilfe oder Kassierer:in',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Aushilfe Verkauf',d:{menschen:2,verkauf:2,ordnung:2},k:1,de:2,re:1,we:2,sc:1,ab:1,st:1,pr:['laden'],kw:['kasse','kassier','aushilfe','supermarkt'],w:'Du kassierst, füllst Regale auf und hilfst Kunden, etwas zu finden.'},
+ {id:'baecker',n:'Verkaufshilfe in der Bäckerei',typ:'H',info:'Direkt arbeiten',s:'Verkäufer Bäckerei',d:{menschen:3,verkauf:2,essen:2},k:2,de:2,re:1,we:2,fr:2,st:2,al:['mehl'],pr:['laden','kueche'],kw:['bäck','baeck','backen','brot','konditor'],w:'Du verkaufst Brot und Brötchen, machst Kaffee und hältst die Theke sauber.'},
+ {id:'lager',n:'Lagerhelfer:in',typ:'H',info:'Direkt arbeiten',s:'Lagerhelfer',d:{ordnung:3,haende:2,technik:1},k:3,de:1,sc:2,fr:1,st:2,al:['staub'],pr:['lager'],kw:['lager','logistik','amazon','versand'],w:'Du packst Pakete, sortierst Ware und bringst sie an den richtigen Platz.'},
+ {id:'fachlager',n:'Fachlagerist:in',typ:'A',info:'Ausbildung, 2 Jahre',s:'Fachlagerist',d:{ordnung:3,haende:2,technik:2},k:2,de:2,re:1,sc:1,pr:['lager'],kw:['lager','gabelstapler','stapler','logistik'],w:'Du nimmst Ware an, prüfst sie und lagerst sie ein. Später fährst du auch Gabelstapler.'},
+ {id:'kuechenhilfe',n:'Küchenhilfe',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Küchenhilfe',d:{essen:3,haende:2,sauber:2},k:2,de:1,we:2,sc:1,ab:1,st:2,laut:1,stress:1,pr:['kueche'],kw:['küche','kueche','spül','spuel'],w:'Du schneidest Gemüse, bereitest Essen vor und spülst Geschirr.'},
+ {id:'fkkueche',n:'Fachkraft Küche',typ:'A',info:'Ausbildung, 2 Jahre',s:'Fachkraft Küche',d:{essen:3,haende:2,kreativ:1,ordnung:1},k:2,de:2,re:1,we:2,sc:1,ab:2,st:2,laut:1,stress:1,pr:['kueche'],kw:['koch','köchin','küche','kueche','kochen'],w:'Du lernst, einfache Gerichte zu kochen, und arbeitest im Team in der Küche.'},
+ {id:'service',n:'Servicekraft im Restaurant oder Café',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Servicekraft',d:{menschen:3,verkauf:2,essen:1},k:2,de:2,re:1,we:2,sc:1,ab:2,st:2,stress:1,pr:['kueche','hotel'],kw:['kellner','service','café','cafe','restaurant','bedienung','gastro'],w:'Du nimmst Bestellungen auf, bringst Essen und Getränke und kassierst.'},
+ {id:'housekeeping',n:'Zimmerreinigung im Hotel',typ:'H',info:'Direkt arbeiten',s:'Housekeeping',d:{sauber:3,ordnung:2,haende:1},k:2,de:1,we:2,st:2,al:['reinigung'],pr:['hotel','reinigung'],kw:['hotel','zimmer','housekeeping'],w:'Du machst Hotelzimmer sauber, beziehst Betten und füllst Handtücher auf.'},
+ {id:'gebaeude',n:'Gebäudereiniger:in',typ:'H',info:'Direkt arbeiten, später auch Ausbildung',s:'Reinigungskraft',d:{sauber:3,haende:2,technik:1,ordnung:1},k:2,de:1,fr:2,ab:1,al:['reinigung','staub'],pr:['reinigung'],kw:['reinig','putz','gebäude'],w:'Du reinigst Büros, Schulen oder Praxen, auch mit Maschinen.'},
+ {id:'pflege',n:'Pflegehelfer:in',typ:'A',info:'Ausbildung, 1 Jahr',s:'Pflegehelfer',d:{helfen:3,menschen:3,haende:1},k:2,de:3,we:2,sc:2,fr:2,na:1,stress:1,pr:['pflege'],kw:['pflege','altenheim','krankenhaus','kranken','senior','altenpfleg'],w:'Du hilfst alten oder kranken Menschen beim Waschen, Anziehen und Essen.'},
+ {id:'betreuung',n:'Betreuungskraft (Alltagsbegleiter:in)',typ:'H',info:'Direkt arbeiten nach einem Kurs',s:'Betreuungskraft',d:{helfen:3,menschen:3,kreativ:1},k:1,de:2,we:1,pr:['pflege'],kw:['betreu','senior','alltag'],w:'Du spielst, singst, gehst spazieren und redest mit alten Menschen.'},
+ {id:'hauswirtschaft',n:'Helfer:in in der Hauswirtschaft',typ:'H',info:'Direkt arbeiten',s:'Hauswirtschaftshelfer',d:{sauber:2,essen:2,helfen:2,ordnung:2},k:2,de:1,we:1,fr:1,al:['reinigung'],pr:['kueche','pflege','reinigung'],kw:['hauswirt','wäsche','haushalt'],w:'Du hilfst beim Kochen, Waschen und Putzen, zum Beispiel in einem Seniorenheim.'},
+ {id:'kinderpflege',n:'Kinderpfleger:in',typ:'A',info:'Schulische Ausbildung, 2 Jahre',s:'Kinderpfleger',d:{helfen:3,menschen:3,kreativ:2},k:2,de:3,pr:['kita'],kw:['kita','kinder','erzieh','kindergarten'],w:'Du spielst mit Kindern, hilfst ihnen und arbeitest mit Erzieherinnen und Erziehern.',hinweis:'Dafür brauchst du meistens einen Mittelschulabschluss.'},
+ {id:'produktion',n:'Produktionshelfer:in',typ:'H',info:'Direkt arbeiten',s:'Produktionshelfer',d:{haende:2,technik:2,ordnung:2},k:2,de:1,sc:2,fr:1,na:1,st:2,laut:1,pr:['fabrik'],kw:['fabrik','produktion','montage'],w:'Du arbeitest an Maschinen, prüfst Teile und packst Produkte ein.'},
+ {id:'maschinen',n:'Maschinen- und Anlagenführer:in',typ:'A',info:'Ausbildung, 2 Jahre',s:'Maschinen- und Anlagenführer',d:{technik:3,haende:2,ordnung:2},k:2,de:2,re:2,sc:2,laut:1,pr:['fabrik','werkstatt'],kw:['maschine','anlage'],w:'Du bedienst große Maschinen in einer Fabrik, stellst sie ein und prüfst die Produkte.'},
+ {id:'metall',n:'Fachkraft Metalltechnik',typ:'A',info:'Ausbildung, 2 Jahre',s:'Fachkraft Metalltechnik',d:{haende:3,technik:3,ordnung:1},k:2,de:2,re:2,laut:1,pr:['werkstatt','fabrik'],kw:['metall','schweiß','schweiss','schlosser'],w:'Du bohrst, sägst und schweißt Teile aus Metall.'},
+ {id:'bau',n:'Bauhelfer:in',typ:'H',info:'Direkt arbeiten',s:'Bauhelfer',d:{haende:3,draussen:3,technik:1},k:3,de:1,fr:2,laut:1,pr:['handwerk'],kw:['bau','maurer'],w:'Du hilfst auf der Baustelle, trägst Material und mischst Beton.'},
+ {id:'maler',n:'Maler:in (Bauten- und Objektbeschichter:in)',typ:'A',info:'Ausbildung, 2 Jahre',s:'Maler',d:{haende:3,kreativ:2,draussen:1},k:2,de:2,re:1,al:['staub'],pr:['handwerk'],kw:['maler','malen','farbe','lackier','streich'],w:'Du streichst Wände, tapezierst und machst Räume schön.'},
+ {id:'galabau',n:'Helfer:in im Garten- und Landschaftsbau',typ:'H',info:'Direkt arbeiten',s:'Helfer Garten- und Landschaftsbau',d:{draussen:3,natur:3,haende:3},k:3,de:1,fr:2,pr:['garten'],kw:['garten','gärtner','gaertner','pflanz','rasen','landschaft'],w:'Du pflanzt Blumen und Bäume, mähst Rasen und legst Wege an.'},
+ {id:'landwirtschaft',n:'Helfer:in in Landwirtschaft oder Tierhaltung',typ:'H',info:'Direkt arbeiten',s:'Helfer Landwirtschaft',d:{natur:3,draussen:3,haende:2},k:3,de:1,we:2,fr:2,al:['staub'],pr:['garten'],kw:['tier','bauernhof','pferd','stall','landwirt'],w:'Du fütterst Tiere, machst den Stall sauber und hilfst bei der Ernte.'},
+ {id:'kfz',n:'Helfer:in in der Kfz-Werkstatt oder im Reifenservice',typ:'H',info:'Direkt arbeiten',s:'Kfz Helfer',d:{technik:3,haende:3},k:3,de:1,laut:1,pr:['werkstatt'],kw:['auto','kfz','mechan','reifen','werkstatt'],w:'Du wechselst Reifen, putzt Autos und hilfst den Mechanikerinnen und Mechanikern.'},
+ {id:'fahrrad',n:'Fahrradmonteur:in',typ:'A',info:'Ausbildung, 2 Jahre',s:'Fahrradmonteur',d:{technik:3,haende:3,menschen:1},k:2,de:2,re:1,we:1,pr:['werkstatt'],kw:['fahrrad','e-bike','bike','zweirad'],w:'Du baust Fahrräder zusammen und reparierst sie.'},
+ {id:'paket',n:'Paketzusteller:in',typ:'H',info:'Direkt arbeiten',s:'Paketzusteller',d:{fahren:3,draussen:2,ordnung:2},k:3,de:1,fr:2,fs:1,a18:1,stress:1,kw:['paket','zustell','dhl','lieferwagen','transporter'],w:'Du fährst mit einem Transporter und bringst Pakete zu den Menschen.'},
+ {id:'fkep',n:'Fachkraft für Kurier-, Express- und Postdienste',typ:'A',info:'Ausbildung, 2 Jahre',s:'Fachkraft Kurier Express Post',d:{fahren:2,ordnung:2,draussen:2,menschen:1},k:2,de:2,re:1,fr:2,pr:['lager'],kw:['post','brief','kurier'],w:'Du sortierst Briefe und Pakete und bringst sie zu Fuß, mit dem Rad oder dem Auto aus.'},
+ {id:'umzug',n:'Umzugshelfer:in',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Umzugshelfer',d:{haende:2,fahren:1,ordnung:1},k:3,de:1,we:1,kw:['umzug','möbel','moebel'],w:'Du trägst Möbel und Kartons und baust Schränke auf und ab.'},
+ {id:'security',n:'Sicherheitsmitarbeiter:in',typ:'H',info:'Direkt arbeiten nach einem Kurs',s:'Sicherheitsmitarbeiter',d:{menschen:2,ordnung:2},k:1,de:2,we:2,sc:2,ab:2,na:1,a18:1,kw:['security','sicherheit','polizei','wachdienst','türsteher'],w:'Du passt auf Gebäude, Geschäfte oder Veranstaltungen auf und kontrollierst Eingänge.'},
+ {id:'friseur',n:'Friseur:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Friseur',d:{kreativ:3,menschen:3,haende:3},k:2,de:2,we:1,st:2,al:['haut'],pr:['friseur'],kw:['friseur','frisör','haare','beauty','kosmetik','barber'],w:'Du wäschst, schneidest und färbst Haare und berätst deine Kundschaft.'},
+ {id:'tankstelle',n:'Mitarbeiter:in an der Tankstelle',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Tankstelle Aushilfe',d:{menschen:2,verkauf:2,ordnung:1},k:1,de:2,re:1,we:2,sc:2,ab:2,na:1,pr:['laden'],kw:['tankstelle'],w:'Du kassierst, verkaufst Snacks und Kaffee und füllst Regale auf.'},
+ {id:'lieferdienst',n:'Fahrer:in beim Lieferdienst',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Fahrer Lieferdienst',d:{fahren:3,draussen:2,essen:1},k:2,de:1,we:2,ab:2,kw:['liefer','lieferando','fahrer','kurier'],w:'Du bringst Essen oder Einkäufe mit dem Fahrrad oder Roller zu den Kunden.'},
+ {id:'buerohilfe',fam:'buero',n:'Bürohilfe (Aushilfe im Büro)',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Bürohilfe',d:{ordnung:3,menschen:1},pc:3,k:1,de:3,re:1,pr:['buero','schule'],kw:['büro','buero','computer','pc','verwaltung','sekretär'],w:'Du sortierst Post, scannst Briefe, gibst Daten am Computer ein und gehst ans Telefon.'},
+ {id:'kundenservice',fam:'buero',n:'Mitarbeiter:in im Kundenservice',typ:'H',info:'Direkt arbeiten',s:'Kundenservice',d:{menschen:3,helfen:2,verkauf:1},pc:3,k:1,de:3,sc:1,ab:1,stress:1,pr:['buero'],kw:['kundenservice','callcenter','telefon','hotline'],w:'Du beantwortest Fragen von Kunden am Telefon, per E-Mail oder im Chat.'},
+ {id:'ehk',fam:'verkauf',n:'Kaufmann/Kauffrau im Einzelhandel',typ:'A',info:'Ausbildung, 3 Jahre',s:'Kaufmann im Einzelhandel',d:{verkauf:3,menschen:3,ordnung:2},pc:1,k:2,de:3,re:2,we:2,st:2,pr:['laden'],kw:['kaufmann','kauffrau','einzelhandel'],w:'Du verkaufst, bestellst Ware, gestaltest den Laden und rechnest die Kasse ab.',hinweis:'Nach der Ausbildung als Verkäufer:in kannst du oft ein 3. Jahr anhängen.'},
+ {id:'fklog',fam:'lager',n:'Fachkraft für Lagerlogistik',typ:'A',info:'Ausbildung, 3 Jahre',s:'Fachkraft für Lagerlogistik',d:{ordnung:3,technik:2,haende:2},pc:1,k:2,de:2,re:2,sc:1,pr:['lager'],kw:['lager','logistik','stapler'],w:'Du planst, wie Ware ins Lager kommt und wieder hinaus. Du fährst Gabelstapler und arbeitest am Computer.'},
+ {id:'elektrohelfer',fam:'haustechnik',n:'Helfer:in in der Elektroinstallation',typ:'H',info:'Direkt arbeiten',s:'Helfer Elektro',d:{technik:3,haende:3,ordnung:1},k:2,de:2,re:1,fr:2,pr:['handwerk'],kw:['elektr','strom','kabel'],w:'Du verlegst Kabel, bohrst Löcher und hilfst Elektrikerinnen und Elektrikern.'},
+ {id:'shk',fam:'haustechnik',n:'Helfer:in für Sanitär und Heizung',typ:'H',info:'Direkt arbeiten, später auch Ausbildung',s:'Helfer Sanitär Heizung',d:{technik:2,haende:3,menschen:1},k:3,de:1,fr:2,pr:['handwerk'],kw:['sanitär','sanitaer','heizung','klempner','installateur'],w:'Du hilfst beim Einbau von Bädern, Rohren und Heizungen.'},
+ {id:'hausmeister',fam:'haustechnik',n:'Helfer:in im Hausmeisterservice',typ:'H',info:'Direkt arbeiten',s:'Hausmeisterhelfer',d:{haende:2,technik:2,sauber:2,draussen:2},k:2,de:1,fr:1,pr:['handwerk','reinigung','schule'],kw:['hausmeister'],w:'Du reparierst kleine Dinge, mähst Rasen, räumst Schnee und hältst Häuser in Ordnung.'},
+ {id:'schreiner',fam:'bau',n:'Schreiner:in (Tischler:in)',typ:'A',info:'Ausbildung, 3 Jahre',s:'Schreiner',d:{haende:3,kreativ:2,technik:2},k:2,de:2,re:2,laut:1,al:['staub'],pr:['handwerk','werkstatt'],kw:['schreiner','tischler','holz'],w:'Du baust Möbel, Türen und Fenster aus Holz.'},
+ {id:'hochbau',fam:'bau',n:'Hochbaufacharbeiter:in',typ:'A',info:'Ausbildung, 2 Jahre',s:'Hochbaufacharbeiter',d:{haende:3,draussen:3,technik:1,ordnung:1},k:3,de:2,re:1,fr:2,laut:1,pr:['handwerk'],kw:['bau','maurer','beton'],w:'Du mauerst Wände, arbeitest mit Beton und baust Häuser mit.'},
+ {id:'fahrzeugpflege',fam:'technik',n:'Fahrzeugpfleger:in (Autoaufbereitung)',typ:'H',info:'Direkt arbeiten',s:'Fahrzeugaufbereitung',d:{sauber:3,technik:2,haende:2},k:2,de:1,we:1,al:['reinigung'],pr:['werkstatt','reinigung','autohaus'],kw:['autowäsche','fahrzeug','aufbereitung','waschanlage'],w:'Du putzt Autos innen und außen, polierst sie und machst sie wieder schön.'},
+ {id:'fvlm',fam:'verkauf',n:'Fachverkäufer:in im Lebensmittelhandwerk',typ:'A',info:'Ausbildung, 3 Jahre',s:'Fachverkäufer Lebensmittelhandwerk',d:{menschen:3,verkauf:3,essen:2},k:2,de:2,re:1,we:2,fr:2,st:2,pr:['laden','kueche'],kw:['metzger','fleisch','konditor','theke'],w:'Du verkaufst in einer Bäckerei oder Metzgerei, berätst Kunden und belegst Brötchen.'},
+ {id:'baeckerA',fam:'gastro',n:'Bäcker:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Bäcker',d:{essen:3,haende:3,kreativ:1},k:2,de:2,re:1,we:2,fr:2,na:1,st:2,al:['mehl'],pr:['kueche'],kw:['bäcker','baecker','backen','brot','konditor'],w:'Du backst Brot, Brötchen und Kuchen. Die Arbeit beginnt oft sehr früh.'},
+ {id:'koch',fam:'gastro',n:'Koch/Köchin',typ:'A',info:'Ausbildung, 3 Jahre',s:'Koch',d:{essen:3,kreativ:2,haende:2,ordnung:1},k:2,de:2,re:1,we:2,sc:1,ab:2,st:2,laut:1,stress:1,pr:['kueche'],kw:['koch','köchin','kochen'],w:'Du kochst Gerichte, planst Menüs und richtest das Essen schön an.'},
+ {id:'florist',fam:'gruen',n:'Florist:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Florist',d:{kreativ:3,natur:3,menschen:2,verkauf:1},k:1,de:2,re:1,we:1,st:2,al:['haut'],pr:['garten','laden','blumen'],kw:['blume','florist','strauß'],w:'Du bindest Blumensträuße, schmückst Räume und berätst Kunden im Blumenladen.'},
+ {id:'gaertner',fam:'gruen',n:'Gärtner:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Gärtner',d:{natur:3,draussen:3,haende:2},k:2,de:2,re:1,fr:2,pr:['garten','blumen'],kw:['gärtner','gaertner','garten','pflanz'],w:'Du ziehst Pflanzen groß, pflegst Gärten und Parks und arbeitest viel draußen.'},
+ {id:'kosmetik',fam:'koerper',n:'Kosmetiker:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Kosmetiker',d:{kreativ:2,menschen:3,haende:2,helfen:1},k:1,de:2,we:1,al:['haut'],pr:['kosmetik','friseur'],kw:['kosmetik','beauty','nägel','naegel','make-up','schmink'],w:'Du pflegst Haut und Nägel, schminkst Kundinnen und Kunden und berätst sie.'},
+ {id:'waescherei',fam:'reinigung',n:'Helfer:in in der Wäscherei',typ:'H',info:'Direkt arbeiten',s:'Wäscherei Helfer',d:{sauber:2,ordnung:3,haende:1},k:2,de:1,sc:1,fr:1,st:2,al:['reinigung'],pr:['reinigung','hotel'],kw:['wäsche','waesche','wäscherei','textil'],w:'Du sortierst Wäsche, bedienst große Waschmaschinen und faltest Handtücher und Kleidung.'},
+ {id:'entsorgung',fam:'reinigung',n:'Helfer:in bei Müllabfuhr oder Wertstoffhof',typ:'H',info:'Direkt arbeiten',s:'Helfer Entsorgung',d:{draussen:3,ordnung:2,haende:2},k:3,de:1,fr:2,pr:[],kw:['müll','muell','recycling','entsorgung','wertstoff'],w:'Du sammelst Müll ein oder hilfst Menschen, ihren Müll richtig zu trennen.'},
+ {id:'tierheim',fam:'gruen',n:'Helfer:in im Tierheim oder in der Tierpension',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Tierpflege Helfer',d:{natur:2,helfen:2,sauber:2},k:2,de:1,we:2,fr:1,pr:['garten','tiere'],kw:['tier','hund','katze','tierheim'],w:'Du fütterst Tiere, machst Käfige und Ställe sauber und gehst mit Hunden spazieren.'},
+ {id:'pferdewirt',fam:'gruen',n:'Pferdewirt:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Pferdewirt',d:{natur:3,draussen:2,haende:2},k:3,de:2,re:1,we:2,fr:2,al:['staub'],pr:['garten','tiere'],kw:['pferd','reiten','stall'],w:'Du versorgst Pferde, fütterst und pflegst sie und machst den Stall sauber.'},
+ {id:'mittag',fam:'pflege',n:'Helfer:in in der Mittags- oder Ganztagsbetreuung',typ:'H',info:'Direkt arbeiten, oft als Minijob',s:'Mittagsbetreuung',d:{helfen:3,menschen:3,kreativ:2},k:1,de:2,pr:['kita','schule'],kw:['kinder','hort','mittagsbetreuung','ganztag'],w:'Du passt nach der Schule auf Kinder auf, isst mit ihnen, spielst und hilfst bei den Hausaufgaben.'},
+ {id:'modeverkauf',fam:'verkauf',n:'Verkaufshilfe im Modegeschäft',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Aushilfe Mode',d:{verkauf:3,menschen:2,ordnung:2,kreativ:1},k:1,de:2,re:1,we:2,st:2,pr:['laden'],kw:['mode','kleidung','schuhe','fashion'],w:'Du berätst Kunden bei Kleidung, legst Ware zusammen und hängst neue Sachen auf.'},
+ {id:'schneiderei',fam:'koerper',n:'Helfer:in in der Änderungsschneiderei',typ:'H',info:'Direkt arbeiten',s:'Änderungsschneiderei Aushilfe',d:{haende:3,kreativ:2,ordnung:1},k:1,de:1,pr:[],kw:['näh','naeh','schneider','stoff'],w:'Du kürzt Hosen, nähst Knöpfe an und änderst Kleidung mit der Nähmaschine.'},
+ {id:'kommission',fam:'lager',n:'Kommissionierer:in (auch im Kühllager)',typ:'H',info:'Direkt arbeiten',s:'Kommissionierer',d:{ordnung:3,haende:1},k:3,de:1,sc:2,fr:2,st:2,pr:['lager'],kw:['kommission','kühl','kuehl'],w:'Du stellst Bestellungen zusammen: Du suchst die Ware im Lager und packst sie auf Paletten.'},
+ {id:'lkw',fam:'fahren',n:'Berufskraftfahrer:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Berufskraftfahrer',d:{fahren:3,ordnung:1,technik:1},k:2,de:2,re:1,we:1,fr:2,na:1,pr:['lager'],kw:['lkw','trucker','berufskraftfahrer','laster','busfahrer'],w:'Du fährst Lkw oder Bus, belädst das Fahrzeug und kontrollierst die Technik.',hinweis:'Den Lkw-Führerschein machst du in der Ausbildung.'},
+ {id:'dachdecker',fam:'bau',n:'Dachdecker:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Dachdecker',d:{haende:3,draussen:3,technik:1},k:3,de:2,re:1,fr:2,pr:['handwerk'],kw:['dach'],w:'Du deckst Dächer mit Ziegeln, dichtest sie ab und baust Dachfenster ein.',hinweis:'Du solltest keine Höhenangst haben.'},
+ {id:'fliesen',fam:'bau',n:'Fliesenleger:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Fliesenleger',d:{haende:3,ordnung:2,kreativ:1},k:3,de:2,re:2,al:['staub'],pr:['handwerk'],kw:['fliese'],w:'Du legst Fliesen in Bädern und Küchen und sorgst dafür, dass alles gerade ist.'},
+ {id:'strasse',fam:'bau',n:'Straßenbauer:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Straßenbauer',d:{draussen:3,haende:3,technik:2},k:3,de:2,re:1,fr:2,laut:1,pr:['handwerk'],kw:['straße','strasse','asphalt','pflaster'],w:'Du baust Straßen, Wege und Plätze und arbeitest mit großen Maschinen.'},
+ {id:'ausbau',fam:'bau',n:'Ausbaufacharbeiter:in',typ:'A',info:'Ausbildung, 2 Jahre',s:'Ausbaufacharbeiter',d:{haende:3,technik:1,kreativ:1,ordnung:1},k:2,de:2,re:1,al:['staub'],pr:['handwerk'],kw:['trockenbau','ausbau','estrich'],w:'Du baust Wände aus Gipsplatten, legst Böden und hilfst beim Innenausbau.'},
+ {id:'lackierer',fam:'technik',n:'Fahrzeuglackierer:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Fahrzeuglackierer',d:{haende:3,technik:2,kreativ:2},k:2,de:2,re:1,al:['staub','haut'],pr:['werkstatt','autohaus'],kw:['lack'],w:'Du schleifst Autos ab und lackierst sie neu, damit sie wieder glänzen.'},
+ {id:'kfzmech',fam:'technik',n:'Kfz-Mechatroniker:in',typ:'A',info:'Ausbildung, 3,5 Jahre',s:'Kfz-Mechatroniker',d:{technik:3,haende:3,ordnung:1},pc:1,k:2,de:2,re:2,abs:2,pr:['werkstatt','autohaus'],kw:['kfz','mechatron','mechaniker','auto'],w:'Du reparierst Autos, suchst Fehler mit dem Computer und machst Inspektionen.',hinweis:'Dafür brauchst du meist einen guten Schulabschluss.'},
+ {id:'fkgastro',fam:'gastro',n:'Fachkraft Gastronomie (Service)',typ:'A',info:'Ausbildung, 2 Jahre',s:'Fachkraft Gastronomie',d:{menschen:3,essen:2,verkauf:2},k:2,de:2,re:1,we:2,sc:1,ab:2,st:2,stress:1,pr:['kueche','hotel'],kw:['restaurant','service','kellner','gastronomie'],w:'Du lernst, Gäste zu bedienen, Tische schön zu decken und Getränke zu machen.'},
+ {id:'schnell',fam:'gastro',n:'Mitarbeiter:in im Schnellrestaurant',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Mitarbeiter Restaurant',d:{essen:2,menschen:2,ordnung:1},k:2,de:1,re:1,we:2,sc:2,ab:2,st:2,stress:1,pr:['kueche'],kw:['mcdonald','burger','fast','döner','doener','pizza','imbiss'],w:'Du machst Burger oder Pizza, nimmst Bestellungen an und hältst alles sauber.'},
+ {id:'holbring',fam:'pflege',n:'Mitarbeiter:in im Hol- und Bringdienst (Krankenhaus)',typ:'H',info:'Direkt arbeiten',s:'Hol- und Bringdienst Krankenhaus',d:{helfen:2,ordnung:2,menschen:1},k:2,de:1,we:1,sc:1,pr:['pflege'],kw:['krankenhaus','klinik','patient'],w:'Du bringst Patienten im Rollstuhl oder Bett zu Untersuchungen und transportierst Material.'},
+ {id:'lebensmittelprod',fam:'produktion',n:'Produktionshelfer:in in der Lebensmittelindustrie',typ:'H',info:'Direkt arbeiten',s:'Produktionshelfer Lebensmittel',d:{essen:2,ordnung:2,haende:2},k:2,de:1,sc:2,fr:1,st:2,pr:['fabrik','kueche'],kw:['lebensmittel','schokolade','getränk'],w:'Du hilfst bei der Herstellung von Lebensmitteln, kontrollierst und verpackst sie.'},
+ {id:'geruest',fam:'bau',n:'Helfer:in im Gerüstbau',typ:'H',info:'Direkt arbeiten',s:'Gerüstbauhelfer',d:{draussen:3,haende:2,technik:1},k:3,de:1,fr:2,pr:['handwerk'],kw:['gerüst','geruest'],w:'Du trägst Teile und baust Gerüste an Häusern auf und ab.',hinweis:'Du solltest keine Höhenangst haben.'},
+ {id:'zeitung',fam:'fahren',n:'Zeitungs- oder Prospektzusteller:in',typ:'H',info:'Minijob, auch neben der Schule',s:'Zusteller Prospekte',d:{draussen:3,ordnung:1,fahren:1},k:2,de:1,fr:2,kw:['zeitung','prospekt'],w:'Du verteilst Zeitungen oder Werbung in Briefkästen, zu Fuß oder mit dem Rad.'},
+ {id:'event',fam:'lager',n:'Helfer:in beim Event- und Messeaufbau',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Helfer Veranstaltungstechnik',d:{haende:2,technik:2,menschen:1},k:3,de:1,we:2,ab:2,pr:['handwerk'],kw:['event','messe','bühne','buehne','konzert','festival'],w:'Du baust Bühnen, Licht und Stände für Konzerte, Feste und Messen auf und ab.'},
+ {id:'zimmerer',fam:'bau',n:'Zimmerer/Zimmerin',typ:'A',info:'Ausbildung, 3 Jahre',s:'Zimmerer',d:{haende:3,draussen:2,technik:1,kreativ:1},k:3,de:2,re:2,fr:2,al:['staub'],pr:['handwerk'],kw:['zimmerer','zimmerin','dachstuhl','holzbau'],w:'Du baust Dachstühle, Holzhäuser und Treppen aus Holz.',hinweis:'Du solltest keine Höhenangst haben.'},
+ {id:'maurer',fam:'bau',n:'Maurer:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Maurer',d:{haende:3,draussen:3,ordnung:1},k:3,de:2,re:1,fr:2,laut:1,pr:['handwerk'],kw:['maurer','mauer'],w:'Du mauerst Wände aus Steinen und baust Häuser.'},
+ {id:'bodenleger',fam:'bau',n:'Bodenleger:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Bodenleger',d:{haende:3,ordnung:2,kreativ:1},k:2,de:2,re:2,al:['staub'],pr:['handwerk'],kw:['boden','parkett','teppich'],w:'Du verlegst Parkett, Teppich und andere Böden in Wohnungen und Büros.'},
+ {id:'gleisbauer',fam:'bau',n:'Gleisbauer:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Gleisbauer',d:{draussen:3,haende:2,technik:2},k:3,de:2,re:1,sc:1,fr:2,na:1,laut:1,pr:['handwerk'],kw:['gleis','schiene','bahn'],w:'Du baust und reparierst Gleise für Züge und Straßenbahnen.'},
+ {id:'elektroniker',fam:'haustechnik',n:'Elektroniker:in für Energie- und Gebäudetechnik',typ:'A',info:'Ausbildung, 3,5 Jahre',s:'Elektroniker Energie- und Gebäudetechnik',d:{technik:3,haende:2,ordnung:2},pc:1,k:2,de:2,re:2,abs:2,fr:1,pr:['handwerk'],kw:['elektron','elektriker','strom','solar'],w:'Du verlegst Leitungen, schließt Lampen und Steckdosen an und baust Solaranlagen ein.',hinweis:'Dafür brauchst du meist einen guten Schulabschluss und gute Noten in Mathe.'},
+ {id:'shkA',fam:'haustechnik',n:'Anlagenmechaniker:in für Sanitär-, Heizungs- und Klimatechnik',typ:'A',info:'Ausbildung, 3,5 Jahre',s:'Anlagenmechaniker SHK',d:{technik:3,haende:3,menschen:1},k:2,de:2,re:2,fr:2,pr:['handwerk'],kw:['sanitär','sanitaer','heizung','installateur','klima','wärmepumpe'],w:'Du baust Bäder, Heizungen und Wärmepumpen ein und reparierst sie bei Kunden zu Hause.'},
+ {id:'landwirtA',fam:'gruen',n:'Landwirt:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Landwirt',d:{natur:3,draussen:3,technik:2,haende:2},k:3,de:2,re:1,we:2,fr:2,al:['staub'],pr:['garten','tiere'],kw:['landwirt','bauernhof','traktor','feld'],w:'Du arbeitest auf dem Bauernhof, versorgst Tiere, fährst Traktor und erntest auf dem Feld.'},
+ {id:'tierwirt',fam:'gruen',n:'Tierwirt:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Tierwirt',d:{natur:3,haende:2,sauber:1},k:3,de:2,re:1,we:2,fr:2,al:['staub'],pr:['garten','tiere'],kw:['kuh','schwein','huhn','stall','tierwirt'],w:'Du kümmerst dich um Kühe, Schweine oder Hühner, fütterst sie und hältst die Ställe sauber.'},
+ {id:'forstwirt',fam:'gruen',n:'Forstwirt:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Forstwirt',d:{draussen:3,natur:3,technik:2,haende:2},k:3,de:2,re:1,fr:2,laut:1,pr:['garten'],kw:['wald','forst','baum'],w:'Du pflegst den Wald, fällst Bäume mit der Motorsäge und pflanzt neue.'},
+ {id:'hauswirtA',fam:'reinigung',n:'Hauswirtschafter:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Hauswirtschafter',d:{essen:2,sauber:2,helfen:2,ordnung:2},k:2,de:2,re:1,we:1,pr:['kueche','pflege','reinigung'],kw:['hauswirt'],w:'Du planst und kochst Essen und pflegst Wäsche und Räume, zum Beispiel in Heimen oder Kantinen.'},
+ {id:'fleischer',fam:'gastro',n:'Fleischer:in (Metzger:in)',typ:'A',info:'Ausbildung, 3 Jahre',s:'Fleischer',d:{essen:3,haende:3,menschen:1},k:2,de:2,re:1,we:1,fr:2,st:2,pr:['kueche','laden'],kw:['metzger','fleisch','wurst'],w:'Du verarbeitest Fleisch, machst Wurst und bereitest Speisen für die Theke vor.'},
+ {id:'konditor',fam:'gastro',n:'Konditor:in',typ:'A',info:'Ausbildung, 3 Jahre',s:'Konditor',d:{essen:3,kreativ:3,haende:3},k:2,de:2,re:1,we:2,fr:2,st:2,al:['mehl'],pr:['kueche'],kw:['konditor','torte','kuchen'],w:'Du backst und verzierst Torten, Kuchen und Pralinen.'},
+ {id:'baumarkt',fam:'verkauf',n:'Verkaufshilfe im Baumarkt',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Aushilfe Baumarkt',d:{verkauf:2,menschen:2,technik:2,ordnung:2},k:2,de:2,re:1,we:1,st:2,pr:['laden','handwerk'],kw:['baumarkt','werkzeug'],w:'Du räumst Werkzeug und Baumaterial ein und hilfst Kunden, das Richtige zu finden.'},
+ {id:'abfallA',fam:'reinigung',n:'Fachkraft für Kreislauf- und Abfallwirtschaft',typ:'A',info:'Ausbildung, 3 Jahre',s:'Fachkraft Kreislauf- und Abfallwirtschaft',d:{technik:2,ordnung:2,draussen:2},pc:1,k:2,de:2,re:1,fr:2,pr:[],kw:['recycling','abfall','entsorgung','müll','muell'],w:'Du sorgst dafür, dass Müll richtig getrennt und recycelt wird, und bedienst die Anlagen.'},
+ {id:'bueromanagement',fam:'buero',n:'Kaufmann/Kauffrau für Büromanagement',typ:'A',info:'Ausbildung, 3 Jahre',s:'Kaufmann für Büromanagement',d:{ordnung:3,menschen:2},pc:3,k:1,de:3,re:2,abs:3,pr:['buero'],kw:['büro','buero','verwaltung','büromanagement'],w:'Du schreibst E-Mails, planst Termine, kümmerst dich um Rechnungen und arbeitest viel am Computer.',hinweis:'Dafür brauchst du meistens die Mittlere Reife.'},
+ {id:'behindertenhilfe',fam:'pflege',n:'Helfer:in in der Behindertenhilfe',typ:'H',info:'Direkt arbeiten',s:'Helfer Behindertenhilfe',d:{helfen:3,menschen:3,kreativ:1},k:2,de:2,we:2,sc:1,pr:['pflege','schule'],kw:['behindert','inklusion','assistenz'],w:'Du unterstützt Menschen mit Behinderung im Alltag, zum Beispiel beim Essen, Einkaufen oder in der Freizeit.'},
+ {id:'sortierzentrum',fam:'lager',n:'Mitarbeiter:in im Paket- oder Briefzentrum',typ:'H',info:'Direkt arbeiten, auch als Minijob',s:'Paketsortierer',d:{ordnung:3,haende:1},k:2,de:1,sc:2,na:1,ab:1,st:2,pr:['lager'],kw:['sortier','briefzentrum','paketzentrum'],w:'Du sortierst Pakete und Briefe nach Orten, oft abends oder nachts.'},
+ {id:'umzugservice',fam:'lager',n:'Fachkraft für Möbel-, Küchen- und Umzugsservice',typ:'A',info:'Ausbildung, 3 Jahre',s:'Fachkraft Möbel- Küchen- und Umzugsservice',d:{haende:3,ordnung:2,technik:1,menschen:1},k:3,de:2,re:1,pr:['handwerk','lager'],kw:['umzug','möbel','moebel','küchenmonteur'],w:'Du planst Umzüge, baust Möbel und Küchen bei Kunden auf und transportierst sie sicher.'}
+];
+const FAM={verkaeufer:'verkauf',kasse:'verkauf',baecker:'verkauf',tankstelle:'verkauf',lager:'lager',fachlager:'lager',umzug:'lager',kuechenhilfe:'gastro',fkkueche:'gastro',service:'gastro',housekeeping:'reinigung',gebaeude:'reinigung',hauswirtschaft:'reinigung',pflege:'pflege',betreuung:'pflege',kinderpflege:'pflege',produktion:'produktion',maschinen:'produktion',metall:'produktion',bau:'bau',maler:'bau',galabau:'gruen',landwirtschaft:'gruen',kfz:'technik',fahrrad:'technik',paket:'fahren',fkep:'fahren',lieferdienst:'fahren',security:'sicherheit',friseur:'koerper'};
+const PCX={fachlager:1,kasse:1,security:1};
+const FLAGS={
+ dirty:'bau hochbau maler kfz landwirtschaft entsorgung galabau shk metall umzug hausmeister gaertner tierheim pferdewirt dachdecker fliesen strasse ausbau lackierer kfzmech geruest zimmerer maurer bodenleger gleisbauer shkA landwirtA tierwirt forstwirt abfallA',
+ temp:'kuechenhilfe fkkueche koch baeckerA bau hochbau galabau landwirtschaft entsorgung paket gaertner waescherei kommission dachdecker strasse geruest lebensmittelprod pferdewirt zeitung schnell zimmerer maurer gleisbauer landwirtA forstwirt fleischer',
+ routine:'produktion lager waescherei kasse housekeeping gebaeude maschinen fachlager kommission lebensmittelprod schnell zeitung sortierzentrum',
+ mobil:'paket fkep lieferdienst umzug gebaeude hausmeister shk elektrohelfer security lkw zeitung event holbring gleisbauer shkA umzugservice',
+ tiere:'landwirtschaft tierheim pferdewirt landwirtA tierwirt',
+ kinder:'kinderpflege mittag',
+ mode:'friseur kosmetik modeverkauf schneiderei'};
+Object.entries(FLAGS).forEach(([f,ids])=>ids.split(' ').forEach(id=>{const j=JOBS.find(x=>x.id===id); if(j) j[f]=1; else console.warn('Flag-ID fehlt:',id);}));
+JOBS.forEach(j=>{ if(j.abs==null) j.abs=j.typ==='A'?1:0; });
+JOBS.find(j=>j.id==='ehk').abs=2;
+JOBS.forEach(j=>{ if(!j.fam) j.fam=FAM[j.id]; if(j.pc==null) j.pc=PCX[j.id]||0; });
+JOBS.find(j=>j.id==='kfz').pr.push('autohaus');
+JOBS.find(j=>j.id==='kinderpflege').pr.push('schule');
+JOBS.find(j=>j.id==='betreuung').pr.push('schule');
+const FELDER={verkauf:'Verkauf und Handel',lager:'Lager und Logistik',gastro:'Küche, Backen und Gastronomie',reinigung:'Reinigung, Hauswirtschaft und Entsorgung',pflege:'Pflege, Betreuung und Kinder',produktion:'Produktion und Metall',bau:'Bau, Holz und Farbe',haustechnik:'Haustechnik und Elektro',gruen:'Garten, Pflanzen und Tiere',technik:'Fahrzeuge und Technik',fahren:'Fahren und Zustellen',sicherheit:'Sicherheit',koerper:'Haare, Kosmetik und Mode',buero:'Büro und Kundenservice'};
+const FE={verkauf:'🛍️',lager:'📦',gastro:'🍳',reinigung:'🧽',pflege:'🤝',produktion:'🏭',bau:'🧱',haustechnik:'💡',gruen:'🌻',technik:'🔧',fahren:'🚐',sicherheit:'🛡️',koerper:'💇',buero:'🖥️'};
+const SIMD=DIMS.concat(['pc']);
+function vec(j){return SIMD.map(k=>k==='pc'?(j.pc||0):(j.d[k]||0)).concat([j.k*0.7]);}
+function cos(a,b){let s=0,na=0,nb=0;a.forEach((x,i)=>{s+=x*b[i];na+=x*x;nb+=b[i]*b[i];});return s/Math.sqrt(na*nb||1);}
+const REL={verkaeufer:'ehk kasse fvlm tankstelle baecker',kasse:'verkaeufer tankstelle baecker fvlm',baecker:'fvlm baeckerA kasse service',tankstelle:'kasse verkaeufer service',ehk:'verkaeufer fvlm buerohilfe kasse',fvlm:'baecker verkaeufer baeckerA service',
+ lager:'fachlager fklog produktion paket umzug',fachlager:'fklog lager fkep produktion',fklog:'fachlager lager fkep buerohilfe',umzug:'lager bau paket entsorgung',
+ kuechenhilfe:'fkkueche koch hauswirtschaft service baeckerA',fkkueche:'koch kuechenhilfe baeckerA service',koch:'fkkueche baeckerA kuechenhilfe service',baeckerA:'koch fvlm fkkueche baecker',service:'kuechenhilfe housekeeping fkkueche verkaeufer tankstelle',
+ housekeeping:'gebaeude waescherei hauswirtschaft service',gebaeude:'housekeeping maler hausmeister fahrzeugpflege waescherei',hauswirtschaft:'kuechenhilfe housekeeping betreuung waescherei',waescherei:'housekeeping hauswirtschaft gebaeude produktion',entsorgung:'galabau hausmeister umzug gebaeude paket',
+ pflege:'betreuung hauswirtschaft kinderpflege',betreuung:'pflege hauswirtschaft kinderpflege kundenservice',kinderpflege:'betreuung pflege hauswirtschaft',
+ produktion:'maschinen lager metall waescherei',maschinen:'produktion metall fklog kfz',metall:'maschinen kfz shk schreiner',
+ bau:'hochbau maler galabau shk umzug',hochbau:'bau maler schreiner galabau',maler:'gebaeude bau schreiner hochbau hausmeister',schreiner:'maler metall hochbau fahrrad',
+ elektrohelfer:'shk hausmeister maschinen metall',shk:'elektrohelfer hausmeister bau metall',hausmeister:'shk gebaeude galabau elektrohelfer',
+ galabau:'gaertner landwirtschaft hausmeister bau',gaertner:'galabau florist landwirtschaft',landwirtschaft:'galabau gaertner entsorgung',florist:'gaertner verkaeufer kosmetik friseur',
+ kfz:'fahrzeugpflege fahrrad metall tankstelle',fahrrad:'kfz metall schreiner verkaeufer',fahrzeugpflege:'kfz gebaeude tankstelle',
+ paket:'fkep lieferdienst lager umzug',fkep:'paket fachlager lieferdienst',lieferdienst:'paket fkep service',
+ security:'kundenservice tankstelle service',
+ tierheim:'landwirtschaft pferdewirt hauswirtschaft gaertner',pferdewirt:'landwirtschaft tierheim galabau',mittag:'kinderpflege betreuung hauswirtschaft',modeverkauf:'verkaeufer kasse ehk kosmetik',schneiderei:'modeverkauf friseur kosmetik waescherei',
+ kommission:'lager fachlager lebensmittelprod produktion',lkw:'paket fkep lieferdienst fachlager',dachdecker:'geruest hochbau shk bau',fliesen:'ausbau maler hochbau shk',strasse:'hochbau bau galabau geruest',ausbau:'fliesen maler schreiner hochbau',
+ lackierer:'maler fahrzeugpflege kfzmech kfz',kfzmech:'kfz fahrrad lackierer metall',fkgastro:'service fkkueche koch schnell',schnell:'service kuechenhilfe fkgastro kasse',holbring:'pflege betreuung hauswirtschaft lager',
+ lebensmittelprod:'produktion kommission baeckerA kuechenhilfe',geruest:'dachdecker bau hochbau umzug',zeitung:'paket lieferdienst fkep',event:'umzug elektrohelfer security lager',
+ zimmerer:'schreiner dachdecker hochbau maurer',maurer:'hochbau bau strasse fliesen',bodenleger:'fliesen ausbau maler schreiner',gleisbauer:'strasse hochbau bau',
+ elektroniker:'elektrohelfer shkA hausmeister',shkA:'shk elektroniker hausmeister',landwirtA:'tierwirt landwirtschaft forstwirt gaertner',tierwirt:'landwirtA landwirtschaft tierheim pferdewirt',
+ forstwirt:'galabau gaertner landwirtA',hauswirtA:'hauswirtschaft kuechenhilfe betreuung',fleischer:'fvlm koch baeckerA lebensmittelprod',konditor:'baeckerA koch fvlm florist',
+ baumarkt:'verkaeufer kasse fachlager modeverkauf',abfallA:'entsorgung hausmeister fklog',bueromanagement:'buerohilfe kundenservice ehk',behindertenhilfe:'betreuung pflege mittag',
+ sortierzentrum:'lager kommission paket fkep',umzugservice:'umzug schreiner lager',friseur:'kosmetik florist verkaeufer',kosmetik:'friseur florist betreuung',buerohilfe:'kundenservice ehk fklog',kundenservice:'buerohilfe kasse betreuung security'};
+function similar(j,topIds,okIds){
+  const rel=(REL[j.id]||'').split(' ').filter(id=>id&&okIds.has(id)).map(id=>JOBS.find(o=>o.id===id));
+  const pickR=rel.filter(o=>!topIds.has(o.id)).concat(rel.filter(o=>topIds.has(o.id))).slice(0,3);
+  if(pickR.length>=3) return pickR;
+  const c=JOBS.filter(o=>o.id!==j.id&&okIds.has(o.id)).map(o=>({o,s:cos(vec(j),vec(o))+(o.fam===j.fam?0.25:0)})).sort((a,b)=>b.s-a.s);
+  const pick=c.filter(x=>!topIds.has(x.o.id)).slice(0,3);
+  c.forEach(x=>{if(pick.length<3&&!pick.includes(x)) pick.push(x);});
+  const out=pickR.slice(); pick.forEach(x=>{if(out.length<3&&!out.includes(x.o)) out.push(x.o);}); return out;
+}
+
+const R={haende:'du gerne mit den Händen arbeitest',menschen:'du gerne mit Menschen sprichst',helfen:'du gerne anderen Menschen hilfst',essen:'dir Kochen und Essen Spaß machen',sauber:'dir Putzen und Aufräumen nichts ausmachen',technik:'du dich für Technik und Maschinen interessierst',draussen:'du gerne draußen bist',natur:'du Pflanzen oder Tiere magst',verkauf:'du gerne verkaufst und berätst',fahren:'du gerne fährst',ordnung:'du Ordnung magst',kreativ:'du gerne kreativ bist'};
+const PRN={laden:'im Verkauf',kueche:'in einer Küche',pflege:'in der Pflege',kita:'in einer Kita',lager:'in einem Lager',werkstatt:'in einer Werkstatt',handwerk:'im Handwerk',fabrik:'in einer Fabrik',garten:'im Garten oder auf einem Bauernhof',reinigung:'in der Reinigung',friseur:'beim Friseur',hotel:'in einem Hotel',buero:'im Büro',kosmetik:'in einem Kosmetikstudio',blumen:'in einem Blumenladen',autohaus:'in einem Autohaus',schule:'in einer Schule oder einem Jugendzentrum',tiere:'mit Tieren'};
+const FACH={deutsch:'Deutsch',mathe:'Mathe',englisch:'Englisch',sport:'Sport',kunst:'Kunst',werken:'Werken',hauswirtschaft:'Hauswirtschaft',bio:'Biologie',informatik:'Informatik'};
+const NEG=[
+ {w:['putz','reinig','sauber mach'],f:j=>(j.d.sauber||0)>=2},
+ {w:['koch','küche','kueche','essen'],f:j=>(j.d.essen||0)>=2},
+ {w:['tier'],f:j=>j.id==='landwirtschaft'},
+ {w:['pflanz','garten'],f:j=>(j.d.natur||0)>=2},
+ {w:['draußen','draussen','kälte','regen'],f:j=>(j.d.draussen||0)>=2},
+ {w:['nacht','nachts'],f:j=>!!j.na},
+ {w:['wochenende','samstag','sonntag'],f:j=>(j.we||0)>=2},
+ {w:['heben','tragen','schwer'],f:j=>j.k>=3},
+ {w:['kunden','verkauf','kasse'],f:j=>(j.d.verkauf||0)>=2},
+ {w:['alte','pflege','kranke','blut'],f:j=>j.id==='pflege'||j.id==='betreuung'},
+ {w:['kinder'],f:j=>j.id==='kinderpflege'},
+ {w:['fahren','auto'],f:j=>(j.d.fahren||0)>=2},
+ {w:['früh','frueh'],f:j=>(j.fr||0)>=2},
+ {w:['schicht'],f:j=>(j.sc||0)>=2},
+ {w:['laut','lärm','laerm'],f:j=>!!j.laut},
+ {w:['stehen'],f:j=>(j.st||0)>=2}
+];
+
+/* ---------- Auswertung ---------- */
+function has(a,v){return Array.isArray(a)&&a.includes(v)}
+const PCT_C=40, PCT_S=22;
+function evaluate(A){
+  const pref={}; DIMS.forEach(d=>{if(A[d]!=null) pref[d]=YNV[A[d]];});
+  const deL={sehr:4,gut:3,bisschen:2,wenig:1}[A.sprache]||3;
+  const cap={schwer:3,mittel:2,leicht:1}[A.koerper]||2;
+  const multiLang=(A.sprachen||[]).some(x=>x!=='keine'&&x!=='deutsch');
+  const traum=(A.traum||'').trim().toLowerCase();
+  const nicht=(A.nicht||'').trim().toLowerCase();
+  const pm={sehr:1,etwas:.6,nein:-.4}[A.praktikum_gefallen]; const praktMult=pm==null?1:pm;
+  let dreamHit=false;
+  const out=[];
+  for(const j of JOBS){
+    const c=[]; const add=(p,t,g)=>c.push({p,t,g:!!g}); let excluded=false; const notes=[];
+    const d=k=>j.d[k]||0;
+    const sumJ=DIMS.reduce((s,k)=>s+d(k),0);
+    // Interessen
+    DIMS.forEach(k=>{const jd=d(k); if(!jd||pref[k]==null) return; add(30*pref[k]*jd/sumJ,(jd>=2&&pref[k]>0)?R[k]:null,true);});
+    // Stärken
+    const S=A.staerken||[];
+    if(has(S,'puenktlich')) add(1,'du pünktlich bist');
+    if(has(S,'freundlich')&&d('menschen')>=2) add(4,'du freundlich bist');
+    if(has(S,'schnell')&&j.k>=2&&(d('ordnung')>=2||d('essen')>=2||d('fahren')>=2)) add(3,'du schnell arbeiten kannst');
+    if(has(S,'genau')&&(d('ordnung')>=2||d('technik')>=2)) add(3,'du genau arbeitest');
+    if(has(S,'zuhoeren')&&(d('helfen')>=2||d('menschen')>=3)) add(3,'du gut zuhören kannst');
+    if(has(S,'stress')&&j.stress) add(4,'du bei Stress ruhig bleibst');
+    if(has(S,'fit')&&j.k>=3) add(5,'du körperlich fit und stark bist');
+    if(has(S,'geduldig')&&(d('helfen')>=2||d('kreativ')>=2)) add(3,'du geduldig bist');
+    if(has(S,'geschickt')&&d('haende')>=3) add(3,'du geschickt mit den Händen bist');
+    if(has(S,'zuverlaessig')) add(1,'du zuverlässig bist');
+    if(has(S,'hilfsbereit')&&(d('helfen')>=2||d('menschen')>=3)) add(3,'du hilfsbereit bist');
+    // Fächer
+    const F=A.faecher||[]; const fr=f=>`du das Fach ${FACH[f]} magst`;
+    if(has(F,'deutsch')&&j.de>=2&&d('menschen')>=2) add(2,fr('deutsch'));
+    if(has(F,'mathe')&&(j.re||0)>=1) add(3,fr('mathe'));
+    if(has(F,'englisch')&&d('menschen')>=2) add(1,fr('englisch'));
+    if(has(F,'sport')&&j.k>=3) add(3,fr('sport'));
+    if(has(F,'kunst')&&d('kreativ')>=2) add(4,fr('kunst'));
+    if(has(F,'werken')&&(d('technik')>=2||d('haende')>=3)) add(4,fr('werken'));
+    if(has(F,'hauswirtschaft')&&(d('essen')>=2||d('sauber')>=2)) add(4,fr('hauswirtschaft'));
+    if(has(F,'bio')&&(d('natur')>=2||d('helfen')>=3)) add(3,fr('bio'));
+    if(has(F,'informatik')&&(d('technik')>=2||(j.pc||0)>=2)) add(2,fr('informatik'));
+    if(has(F,'wirtschaft')&&((j.pc||0)>=2||d('verkauf')>=3)) add(3,'du das Fach Wirtschaft magst');
+    if(has(F,'ethik')&&d('helfen')>=3) add(2,'du dich für Menschen und das Zusammenleben interessierst');
+    // Computer oder praktisch
+    const jpc=j.pc||0;
+    if(A.pc==='computer'){ if(jpc>=2) add(12,'du gerne am Computer arbeitest'); else if(jpc===1) add(3,null); else if(j.k>=3) add(-4,null); }
+    if(A.pc==='praktisch'){ if(jpc>=2) add(-12,null); else if(d('haende')>=2||j.k>=2) add(4,'du lieber praktisch arbeitest'); }
+    if(A.pcskill==='gut'&&jpc>=1) add(3,'du gut mit dem Computer umgehen kannst');
+    if(A.pcskill==='wenig'){ if(jpc>=2) add(-8,null); else if(jpc===1) add(-2,null); }
+    // Rechnen
+    if(A.rechnen==='schwer'&&(j.re||0)>=1) add(-4*j.re,null);
+    if(A.rechnen==='gut'&&(j.re||0)>=1) add(2,'du gut rechnen kannst');
+    // Was schwer fällt
+    const W=A.schwer||[];
+    if(has(W,'stehen')&&(j.st||0)>=2) add(-6,null);
+    if(has(W,'frueh')&&(j.fr||0)>=2) add(-6,null);
+    if(has(W,'lesen')&&j.de>=3) add(-5,null);
+    if(has(W,'laut')&&j.laut) add(-5,null);
+    if(has(W,'stress')&&j.stress) add(-5,null);
+    if(has(W,'heben')&&j.k>=3) add(-8,null);
+    if(has(W,'fremde')&&d('menschen')>=3) add(-6,null);
+    if(has(W,'sitzen')&&j.k>=2) add(2,'du dich gerne bewegst');
+    // Sprache
+    if(j.de===3&&deL<=2) add(-12,null);
+    if(j.de===2&&deL===1) add(-8,null);
+    if(j.de<=1&&deL<=2) add(3,'du hier auch mit wenig Deutsch gut anfangen kannst');
+    if(multiLang&&d('menschen')>=2) add(3,'du mehrere Sprachen sprichst');
+    // Team
+    if(A.team==='team'&&(d('menschen')>=2||['kuechenhilfe','fkkueche','produktion','bau','lager'].includes(j.id))) add(2,'du gerne im Team arbeitest');
+    if(A.team==='allein'&&(d('fahren')>=2||d('sauber')>=3)) add(3,'du auch gerne allein arbeitest');
+    // Wohngegend & Mobilität
+    if(A.wohngegend==='dorf'&&d('natur')>=2) add(3,null);
+    if(A.wohngegend==='stadt'&&(d('verkauf')>=2||d('menschen')>=3)) add(1,null);
+    if((has(A.mobil,'auto')||has(A.mobil,'roller'))&&d('fahren')>=2) add(2,null);
+    // Führerschein & Alter
+    if(j.fs&&A.fuehrerschein!=='ja'){ if(A.fuehrerschein==='gerade'){add(-6,null);notes.push('Dafür brauchst du den Führerschein.');} else excluded=true; }
+    if(j.a18&&A.alter18==='nein'){add(-15,null);notes.push('Diesen Beruf kannst du ab 18 Jahren machen.');}
+    // Körper & Gesundheit
+    if(j.k>cap) add(-12*(j.k-cap),null);
+    if(cap===3&&j.k===3) add(3,'du auch schwere Arbeit schaffst');
+    const G=A.gesundheit||[];
+    if(has(G,'ruecken')&&j.k>=3) add(-12,null);
+    if(has(G,'allergie')&&(j.al||[]).some(x=>['staub','reinigung','mehl'].includes(x))) add(-12,null);
+    if(has(G,'haut')&&((j.al||[]).some(x=>['haut','reinigung'].includes(x))||d('essen')>=3)) add(-8,null);
+    // Arbeitszeiten
+    const Z=A.zeiten||[];
+    if(Z.length){
+      if(!has(Z,'frueh')&&(j.fr||0)>=2) add(-5,null);
+      if(!has(Z,'abends')&&(j.ab||0)>=2) add(-4,null);
+      if(!has(Z,'nachts')&&j.na) add(-3,null);
+      if(has(Z,'nachts')&&j.na) add(2,null);
+      if(has(Z,'frueh')&&(j.fr||0)>=2) add(2,'du früh am Morgen arbeiten möchtest');
+    }
+    if(A.wochenende==='nein'){ if((j.we||0)>=2) add(-8,null); else if(j.we===1) add(-3,null); }
+    if(A.wochenende==='manchmal'&&(j.we||0)>=2) add(-3,null);
+    if(A.schicht==='nein'){ if((j.sc||0)>=2) add(-8,null); else if(j.sc===1) add(-3,null); }
+    if(A.schicht==='ja'&&(j.sc||0)>=2) add(2,'Schichtarbeit für dich okay ist');
+    if(A.drinnen==='drinnen'&&d('draussen')>=2) add(-8,null);
+    if(A.drinnen==='draussen'&&d('draussen')>=2) add(4,'du am liebsten draußen arbeitest');
+    // Praktikum & Job
+    if(A.praktikum==='ja'){
+      const hit=(A.praktikum_wo||[]).find(p=>(j.pr||[]).includes(p));
+      if(hit) add(16*praktMult,praktMult>0?`du schon ein Praktikum ${PRN[hit]} gemacht hast`:null);
+    }
+    if(A.job==='ja') add(2,null);
+    // Neue Fragen
+    const yn=k=>A[k]!=null?YNV[A[k]]:null;
+    if(j.tiere&&yn('tiere')!=null) add(8*yn('tiere'),yn('tiere')>0?'du Tiere magst':null);
+    if(j.kinder&&yn('kinder')!=null) add(8*yn('kinder'),yn('kinder')>0?'du gerne mit Kindern zusammen bist':null);
+    if(j.mode&&yn('mode')!=null) add(6*yn('mode'),yn('mode')>0?'du dich für Mode und Beauty interessierst':null);
+    if(j.dirty&&yn('schmutz')!=null){ const v=yn('schmutz'); if(v>0) add(2*v,'es dir nichts ausmacht, schmutzig zu werden'); else if(v<0) add(-8,null); }
+    if(A.routine==='gleich'&&j.routine) add(4,'du gerne feste Abläufe hast');
+    if(A.routine==='abwechslung'){ if(j.routine) add(-4,null); if(j.mobil) add(3,'du Abwechslung magst'); }
+    if(A.schreiben==='schwer'){ if(j.de>=3) add(-6,null); if(jpc>=2) add(-3,null); }
+    if(A.schreiben==='gut'&&j.de>=3) add(2,null);
+    if(A.temperatur==='nein'&&j.temp) add(-7,null);
+    if(A.temperatur==='ja'&&j.temp) add(2,null);
+    if(A.stunden==='minijob'){ if(/Minijob/.test(j.info)) add(8,'es diese Arbeit auch als Minijob gibt'); if(j.typ==='A') add(-4,null); }
+    const Wi=A.wichtig||[];
+    if(has(Wi,'geld')&&((j.sc||0)>=2||j.na)) add(2,null);
+    if(has(Wi,'sicher')&&j.typ==='A') add(3,'dir ein sicherer Arbeitsplatz wichtig ist');
+    if(has(Wi,'sinn')&&d('helfen')>=2) add(4,'du etwas Sinnvolles tun möchtest');
+    if(has(Wi,'lernen')&&j.typ==='A') add(3,'du viel Neues lernen möchtest');
+    if(has(Wi,'kollegen')&&d('menschen')>=2) add(1,null);
+    // Schulabschluss
+    const absL={keinen:0,ms:1,quali:2,mittlere:3}[A.abschluss];
+    if(absL!=null){
+      if(j.abs>absL){ add(-5*(j.abs-absL),null); if(!j.hinweis) notes.push('Für diese Ausbildung brauchst du meist einen Schulabschluss. Den kannst du oft im BVJ oder BIK machen.'); }
+      if(absL>=2&&j.typ==='A') add(2,null);
+    }
+    // Ausbildung oder direkt
+    if(A.ausbildung==='ausbildung'&&j.typ==='A') add(7,'du eine Ausbildung machen möchtest');
+    if(A.ausbildung==='direkt'&&j.typ==='H') add(7,'du direkt arbeiten und Geld verdienen möchtest');
+    // Traumberuf / Ausschluss
+    if(traum.length>=3){
+      const m=j.kw.some(k=>traum.includes(k))||j.n.toLowerCase().includes(traum);
+      if(m){dreamHit=true; const t=A.traum.trim().slice(0,40); add(20,`der Beruf zu deinem Wunsch „${t}“ passt`);}
+    }
+    if(nicht.length>=3){
+      if(j.kw.some(k=>nicht.includes(k))) add(-40,null);
+      NEG.forEach(n=>{ if(n.w.some(w=>nicht.includes(w))&&n.f(j)) add(-15,null); });
+    }
+    const total=c.reduce((s,x)=>s+x.p,0);
+    const pos=c.filter(x=>x.t&&x.p>0).sort((a,b)=>b.p-a.p);
+    const spec=pos.find(x=>!x.g&&x.p>=3), gen=pos.find(x=>x.g);
+    let reasons=[spec,gen].filter(Boolean).map(x=>x.t);
+    pos.forEach(x=>{if(reasons.length<2&&!reasons.includes(x.t)) reasons.push(x.t);});
+    const begr=reasons.length?`Das passt zu dir, weil ${reasons.join(' und ')}.`:'Das passt gut zu deinen Antworten, und du kannst hier auch ohne viel Erfahrung anfangen.';
+    out.push({j,total,excluded,begr,notes});
+  }
+  const pctOf=t=>Math.max(5,Math.min(97,Math.round(100/(1+Math.exp(-(t-PCT_C)/PCT_S)))));
+  const all=out.filter(x=>!x.excluded).sort((a,b)=>b.total-a.total);
+  all.forEach(x=>x.pct=pctOf(x.total));
+  const ranked=all.slice(0,10), topIds=new Set(ranked.map(x=>x.j.id)), okIds=new Set(all.map(x=>x.j.id));
+  ranked.forEach(x=>x.sim=similar(x.j,topIds,okIds));
+  const fmap={}; all.forEach(x=>{const f=x.j.fam; if(!fmap[f]){fmap[f]={fam:f,name:FELDER[f],e:FE[f],pct:x.pct,best:x.j.n};}});
+  const fields=Object.values(fmap).sort((a,b)=>b.pct-a.pct);
+  return {ranked,more:all.slice(10,20),fields,dreamHit,traum:(A.traum||'').trim()};
+}
+
+/* ---------- Übersetzungen ---------- */
+const LANGS=[{c:'de',n:'Nur Deutsch'},{c:'en',n:'English'},{c:'ar',n:'العربية',rtl:1},{c:'uk',n:'Українська'},{c:'ru',n:'Русский'},{c:'tr',n:'Türkçe'},{c:'fa',n:'دری / فارسی',rtl:1}];
+const TR_DE=["Wie gut sprichst du Deutsch?", "Sehr gut", "Gut", "Ein bisschen", "Noch wenig", "Welche Sprachen sprichst du?", "Wähle alle Sprachen, die du sprichst, auch Deutsch.", "Deutsch", "Englisch", "Chinesisch", "Hindi", "Spanisch", "Französisch", "Arabisch", "Bengalisch", "Portugiesisch", "Russisch", "Urdu", "Eine andere Sprache", "In welchem Ort wohnst du?", "Zum Beispiel: Nürnberg. Das brauchst du später für die Suche.", "Dein Ort", "Wohnst du eher in der Stadt oder auf dem Land?", "In einer großen Stadt", "In einer kleinen Stadt", "In einem Dorf", "Wie kommst du zur Arbeit?", "Du kannst mehrere Antworten wählen.", "Zu Fuß", "Mit dem Fahrrad", "Mit Bus oder Bahn", "Mit Roller oder Moped", "Mit dem Auto", "Wie lange darf der Weg zur Arbeit dauern?", "Bis 15 Minuten", "Bis 30 Minuten", "Bis 1 Stunde", "Hast du einen Führerschein für das Auto?", "Das ist der Führerschein Klasse B.", "Ja", "Ich mache ihn gerade", "Nein", "Bist du schon 18 Jahre alt?", "Manche Berufe darf man erst ab 18 machen.", "Welchen Schulabschluss hast du oder machst du gerade?", "Wähle das, was am besten passt.", "Noch keinen", "Mittelschulabschluss (Hauptschulabschluss)", "Qualifizierender Abschluss (Quali)", "Mittlere Reife", "Weiß ich nicht", "Arbeitest du gerne mit den Händen?", "Zum Beispiel: bauen, reparieren, basteln.", "Magst du es, mit anderen Menschen zu sprechen?", "Auch mit Menschen, die du nicht kennst.", "Hilfst du gerne anderen Menschen?", "Zum Beispiel alten oder kranken Menschen oder Kindern.", "Bist du gerne mit Kindern zusammen?", "Kochst du gerne oder macht dir Essen Spaß?", "Macht es dir nichts aus, zu putzen und aufzuräumen?", "Macht es dir nichts aus, wenn du bei der Arbeit schmutzig wirst?", "Zum Beispiel mit Farbe, Öl, Erde oder Staub.", "Interessierst du dich für Maschinen, Autos oder Technik?", "Bist du gerne draußen, auch wenn es regnet oder kalt ist?", "Magst du Pflanzen und Natur?", "Zum Beispiel: Blumen, Bäume, Gärten.", "Magst du Tiere?", "Zum Beispiel: Hunde, Katzen, Pferde, Kühe.", "Verkaufst du gerne Dinge oder berätst du gerne andere?", "Beraten heißt: Du erklärst jemandem, was gut für ihn ist.", "Fährst du gerne?", "Zum Beispiel Auto, Roller oder Fahrrad.", "Magst du Ordnung?", "Zum Beispiel: Dinge sortieren, zählen und an den richtigen Platz legen.", "Bist du gerne kreativ?", "Zum Beispiel: malen, gestalten, Haare machen.", "Interessierst du dich für Mode, Kleidung oder Beauty?", "Arbeitest du lieber am Computer oder lieber praktisch?", "Praktisch heißt: Du arbeitest mit den Händen oder bist viel unterwegs.", "Lieber am Computer", "Lieber praktisch", "Beides ist gut", "Arbeitest du lieber im Team oder allein?", "Im Team", "Allein", "Machst du lieber jeden Tag das Gleiche oder lieber etwas Neues?", "Lieber jeden Tag das Gleiche", "Lieber jeden Tag etwas anderes", "Was kannst du gut?", "Pünktlich sein", "Freundlich sein", "Schnell arbeiten", "Genau arbeiten", "Gut zuhören", "Ruhig bleiben bei Stress", "Körperlich fit und stark sein", "Geduldig sein", "Geschickt mit den Händen sein", "Zuverlässig sein", "Hilfsbereit sein", "Welche Schulfächer magst du?", "Mathe", "Sport", "Kunst", "Werken oder Technik", "Kochen oder Hauswirtschaft", "Biologie", "Computer oder Informatik", "Wirtschaft oder Büro", "Ethik, Religion oder Sozialkunde", "Keins davon", "Wie gut kannst du rechnen?", "Zum Beispiel mit Geld an der Kasse.", "Geht so", "Das fällt mir schwer", "Wie gut kannst du auf Deutsch lesen und schreiben?", "Wie gut kannst du mit dem Computer umgehen?", "Zum Beispiel: E-Mails schreiben, im Internet suchen, Word benutzen.", "Was fällt dir schwer?", "Das ist okay. Jeder Mensch findet manche Dinge schwer. Du kannst mehrere Antworten wählen.", "Lange stehen", "Lange still sitzen", "Früh aufstehen", "Viel lesen und schreiben", "Laute Umgebung", "Stress und Zeitdruck", "Schwer heben", "Mit fremden Menschen sprechen", "Nichts davon", "Hast du schon einmal ein Praktikum gemacht?", "Wo hast du dein Praktikum gemacht?", "Supermarkt oder Laden", "Küche oder Restaurant", "Pflegeheim oder Krankenhaus", "Kita oder Kindergarten", "Lager", "Werkstatt", "Handwerk oder Baustelle", "Fabrik", "Garten oder Bauernhof", "Reinigung", "Friseur", "Hotel", "Büro oder Verwaltung", "Kosmetik- oder Nagelstudio", "Blumenladen", "Autohaus oder Autowäsche", "Schule oder Jugendzentrum", "Tierheim, Zoo oder Tierarztpraxis", "Etwas anderes", "Hat dir das Praktikum gefallen?", "Ja, sehr", "Hast du schon einmal gejobbt?", "Zum Beispiel Minijob, Ferienjob oder Aushilfe.", "Wie viel körperliche Arbeit schaffst du?", "Viel: Schwer heben ist okay", "Mittel: Viel stehen und gehen ist okay", "Wenig: Lieber leichte Arbeit", "Gibt es etwas mit deiner Gesundheit, auf das wir achten sollen?", "Du musst das nicht sagen. Die Antwort bleibt auf deinem Gerät.", "Rücken oder Knie", "Allergie, z. B. gegen Staub, Mehl oder Putzmittel", "Empfindliche Haut", "Nein, nichts", "Möchte ich nicht sagen", "Wann möchtest du arbeiten?", "Früh am Morgen", "Am Tag", "Am Abend", "In der Nacht", "Ist Arbeit am Wochenende für dich okay?", "Manchmal", "Ist Schichtarbeit für dich okay?", "Schicht heißt: Manchmal arbeitest du früh, manchmal spät.", "Wie viel möchtest du arbeiten?", "Vollzeit (ungefähr 40 Stunden pro Woche)", "Teilzeit (weniger Stunden)", "Minijob neben der Schule", "Möchtest du lieber drinnen oder draußen arbeiten?", "Drinnen", "Draußen", "Ist es okay für dich, wenn es bei der Arbeit sehr warm oder kalt ist?", "Zum Beispiel in einer Küche, im Kühllager oder draußen im Winter.", "Ja, das ist okay", "Nein, lieber nicht", "Möchtest du eine Ausbildung machen oder direkt arbeiten?", "Ausbildung heißt: Du lernst einen Beruf und bekommst dabei schon Geld.", "Eine Ausbildung machen", "Direkt arbeiten und Geld verdienen", "Weiß ich noch nicht", "Was ist dir bei der Arbeit wichtig?", "Gutes Geld verdienen", "Nette Kolleginnen und Kollegen", "Ein sicherer Arbeitsplatz", "Anderen helfen, etwas Sinnvolles tun", "Viel Neues lernen", "Arbeit nah bei mir zu Hause", "Was ist dein Traumberuf?", "Schreib einfach ein Wort. Zum Beispiel: Koch, Friseurin, Lager.", "Mein Traumberuf", "Gibt es etwas, das du auf keinen Fall machen willst?", "Zum Beispiel: putzen, nachts arbeiten, mit Tieren arbeiten.", "Das will ich nicht"];
+const TR_SRC={"en": ["How well do you speak German?", "Very well", "Well", "A little", "Not much yet", "Which languages do you speak?", "Choose all languages you speak, including German.", "German", "English", "Chinese", "Hindi", "Spanish", "French", "Arabic", "Bengali", "Portuguese", "Russian", "Urdu", "Another language", "In which town do you live?", "For example: Nuremberg. You will need this later for your job search.", "Your town", "Do you live in a city or in the countryside?", "In a big city", "In a small town", "In a village", "How do you get to work?", "You can choose more than one answer.", "On foot", "By bike", "By bus or train", "By scooter or moped", "By car", "How long can your way to work take?", "Up to 15 minutes", "Up to 30 minutes", "Up to 1 hour", "Do you have a driving licence for a car?", "This is driving licence class B.", "Yes", "I am doing it right now", "No", "Are you already 18 years old?", "Some jobs are only allowed from age 18.", "Which school-leaving certificate do you have or are you doing now?", "Choose what fits best.", "None yet", "Lower secondary school certificate (Mittelschulabschluss)", "Qualifying certificate (Quali)", "Intermediate school certificate (Mittlere Reife)", "I don't know", "Do you like working with your hands?", "For example: building, repairing, crafting.", "Do you like talking to other people?", "Also with people you don't know.", "Do you like helping other people?", "For example old or sick people or children.", "Do you like being with children?", "Do you like cooking or do you enjoy food?", "Do you not mind cleaning and tidying up?", "Do you not mind getting dirty at work?", "For example with paint, oil, soil or dust.", "Are you interested in machines, cars or technology?", "Do you like being outside, even when it rains or is cold?", "Do you like plants and nature?", "For example: flowers, trees, gardens.", "Do you like animals?", "For example: dogs, cats, horses, cows.", "Do you like selling things or advising others?", "Advising means: you explain to someone what is good for them.", "Do you like driving?", "For example a car, a scooter or a bike.", "Do you like order?", "For example: sorting things, counting and putting them in the right place.", "Do you like being creative?", "For example: painting, designing, doing hair.", "Are you interested in fashion, clothes or beauty?", "Do you prefer working at a computer or doing practical work?", "Practical means: you work with your hands or you are on the move a lot.", "Rather at a computer", "Rather practical", "Both are fine", "Do you prefer working in a team or alone?", "In a team", "Alone", "Do you prefer doing the same thing every day or something new?", "Rather the same thing every day", "Rather something different every day", "What are you good at?", "Being on time", "Being friendly", "Working fast", "Working carefully", "Listening well", "Staying calm under stress", "Being physically fit and strong", "Being patient", "Being good with my hands", "Being reliable", "Being helpful", "Which school subjects do you like?", "Maths", "Sports", "Art", "Crafts or technology", "Cooking or home economics", "Biology", "Computers or IT", "Business or office", "Ethics, religion or social studies", "None of these", "How good are you at maths?", "For example with money at the checkout.", "So-so", "That is hard for me", "How well can you read and write in German?", "How well can you use a computer?", "For example: writing e-mails, searching the internet, using Word.", "What is hard for you?", "That is okay. Everyone finds some things hard. You can choose more than one answer.", "Standing for a long time", "Sitting still for a long time", "Getting up early", "Reading and writing a lot", "Noisy places", "Stress and time pressure", "Lifting heavy things", "Talking to strangers", "None of these", "Have you ever done an internship?", "Where did you do your internship?", "Supermarket or shop", "Kitchen or restaurant", "Care home or hospital", "Daycare or kindergarten", "Warehouse", "Workshop", "Trades or construction site", "Factory", "Garden or farm", "Cleaning", "Hairdresser", "Hotel", "Office or administration", "Beauty or nail salon", "Flower shop", "Car dealer or car wash", "School or youth centre", "Animal shelter, zoo or vet", "Something else", "Did you like the internship?", "Yes, very much", "Have you ever had a job?", "For example a mini-job, holiday job or temporary job.", "How much physical work can you do?", "A lot: lifting heavy things is okay", "Medium: a lot of standing and walking is okay", "Little: I prefer light work", "Is there anything about your health we should pay attention to?", "You don't have to say this. The answer stays on your device.", "Back or knees", "Allergy, e.g. to dust, flour or cleaning products", "Sensitive skin", "No, nothing", "I don't want to say", "When do you want to work?", "Early in the morning", "During the day", "In the evening", "At night", "Is working at the weekend okay for you?", "Sometimes", "Is shift work okay for you?", "Shift means: sometimes you work early, sometimes late.", "How much do you want to work?", "Full-time (about 40 hours a week)", "Part-time (fewer hours)", "Mini-job next to school", "Do you prefer working inside or outside?", "Inside", "Outside", "Is it okay for you if it is very hot or cold at work?", "For example in a kitchen, in a cold store or outside in winter.", "Yes, that is okay", "No, rather not", "Do you want to do an apprenticeship (Ausbildung) or start working directly?", "Ausbildung means: you learn a job and already get paid.", "Do an apprenticeship", "Work directly and earn money", "I don't know yet", "What is important to you at work?", "Earning good money", "Nice colleagues", "A secure job", "Helping others, doing something meaningful", "Learning a lot of new things", "Work close to my home", "What is your dream job?", "Just write one word, in German if you can. For example: Koch (cook), Friseurin (hairdresser), Lager (warehouse).", "My dream job", "Is there anything you never want to do?", "For example: cleaning, working at night, working with animals. Write in German if you can.", "I don't want this"], "ar": ["ما مدى إجادتك للغة الألمانية؟", "جيد جدًا", "جيد", "قليلًا", "ما زلت ضعيفًا", "ما اللغات التي تتحدثها؟", "اختر كل اللغات التي تتحدثها، وأيضًا الألمانية.", "الألمانية", "الإنجليزية", "الصينية", "الهندية", "الإسبانية", "الفرنسية", "العربية", "البنغالية", "البرتغالية", "الروسية", "الأردية", "لغة أخرى", "في أي مدينة أو بلدة تسكن؟", "مثلًا: نورنبرغ. ستحتاج هذا لاحقًا للبحث عن عمل.", "مدينتك", "هل تسكن في مدينة أم في الريف؟", "في مدينة كبيرة", "في مدينة صغيرة", "في قرية", "كيف تذهب إلى العمل؟", "يمكنك اختيار أكثر من إجابة.", "مشيًا على الأقدام", "بالدراجة", "بالحافلة أو القطار", "بالسكوتر أو الدراجة النارية الصغيرة", "بالسيارة", "كم من الوقت يمكن أن يستغرق الطريق إلى العمل؟", "حتى 15 دقيقة", "حتى 30 دقيقة", "حتى ساعة واحدة", "هل لديك رخصة قيادة للسيارة؟", "هذه رخصة القيادة من الفئة B.", "نعم", "أنا أحصل عليها الآن", "لا", "هل عمرك 18 سنة أو أكثر؟", "بعض المهن مسموح بها فقط من عمر 18 سنة.", "ما الشهادة المدرسية التي لديك أو تدرس لها الآن؟", "اختر ما يناسبك أكثر.", "لا يوجد بعد", "شهادة المدرسة المتوسطة (Mittelschulabschluss)", "الشهادة المؤهلة (Quali)", "شهادة المرحلة المتوسطة العليا (Mittlere Reife)", "لا أعرف", "هل تحب العمل بيديك؟", "مثلًا: البناء، التصليح، الأعمال اليدوية.", "هل تحب التحدث مع الآخرين؟", "حتى مع أشخاص لا تعرفهم.", "هل تحب مساعدة الآخرين؟", "مثلًا كبار السن أو المرضى أو الأطفال.", "هل تحب أن تكون مع الأطفال؟", "هل تحب الطبخ أو تستمتع بالطعام؟", "هل لا تمانع التنظيف والترتيب؟", "هل لا تمانع أن تتسخ أثناء العمل؟", "مثلًا بالطلاء أو الزيت أو التراب أو الغبار.", "هل تهتم بالآلات أو السيارات أو التقنية؟", "هل تحب أن تكون في الخارج، حتى عندما تمطر أو يكون الجو باردًا؟", "هل تحب النباتات والطبيعة؟", "مثلًا: الزهور، الأشجار، الحدائق.", "هل تحب الحيوانات؟", "مثلًا: الكلاب، القطط، الخيول، الأبقار.", "هل تحب بيع الأشياء أو تقديم النصيحة للآخرين؟", "النصيحة تعني: تشرح لشخص ما هو الأفضل له.", "هل تحب القيادة؟", "مثلًا السيارة أو السكوتر أو الدراجة.", "هل تحب النظام والترتيب؟", "مثلًا: فرز الأشياء وعدّها ووضعها في المكان الصحيح.", "هل تحب الإبداع؟", "مثلًا: الرسم، التصميم، تصفيف الشعر.", "هل تهتم بالموضة أو الملابس أو التجميل؟", "هل تفضل العمل على الكمبيوتر أم العمل العملي؟", "العمل العملي يعني: تعمل بيديك أو تتنقل كثيرًا.", "أفضّل الكمبيوتر", "أفضّل العمل العملي", "الاثنان مناسبان", "هل تفضل العمل ضمن فريق أم وحدك؟", "ضمن فريق", "وحدي", "هل تفضل أن تفعل نفس الشيء كل يوم أم شيئًا جديدًا؟", "أفضّل نفس الشيء كل يوم", "أفضّل شيئًا مختلفًا كل يوم", "ما الذي تجيده؟", "الالتزام بالمواعيد", "اللطف مع الآخرين", "العمل بسرعة", "العمل بدقة", "الاستماع الجيد", "الهدوء تحت الضغط", "اللياقة البدنية والقوة", "الصبر", "المهارة باليدين", "الاعتمادية", "حب المساعدة", "ما المواد الدراسية التي تحبها؟", "الرياضيات", "الرياضة", "الفن", "الأشغال اليدوية أو التقنية", "الطبخ أو التدبير المنزلي", "الأحياء", "الكمبيوتر أو المعلوماتية", "الاقتصاد أو الأعمال المكتبية", "الأخلاق أو الدين أو التربية الاجتماعية", "لا شيء من هذه", "ما مدى إجادتك للحساب؟", "مثلًا مع النقود عند الصندوق.", "متوسط", "هذا صعب عليّ", "ما مدى إجادتك للقراءة والكتابة بالألمانية؟", "ما مدى إجادتك لاستخدام الكمبيوتر؟", "مثلًا: كتابة البريد الإلكتروني، البحث في الإنترنت، استخدام Word.", "ما الذي يصعب عليك؟", "هذا طبيعي. كل إنسان يجد بعض الأشياء صعبة. يمكنك اختيار أكثر من إجابة.", "الوقوف لفترة طويلة", "الجلوس بهدوء لفترة طويلة", "الاستيقاظ مبكرًا", "القراءة والكتابة كثيرًا", "الأماكن الصاخبة", "الضغط وضيق الوقت", "رفع الأشياء الثقيلة", "التحدث مع الغرباء", "لا شيء من هذه", "هل قمت بتدريب عملي من قبل؟", "أين قمت بالتدريب العملي؟", "سوبرماركت أو متجر", "مطبخ أو مطعم", "دار رعاية أو مستشفى", "حضانة أو روضة أطفال", "مستودع", "ورشة", "حِرفة أو موقع بناء", "مصنع", "حديقة أو مزرعة", "التنظيف", "صالون حلاقة", "فندق", "مكتب أو إدارة", "صالون تجميل أو أظافر", "محل زهور", "معرض سيارات أو مغسلة سيارات", "مدرسة أو مركز شباب", "مأوى حيوانات أو حديقة حيوان أو عيادة بيطرية", "شيء آخر", "هل أعجبك التدريب العملي؟", "نعم، كثيرًا", "هل عملت في وظيفة من قبل؟", "مثلًا عمل صغير (Minijob) أو عمل في العطلة أو عمل مؤقت.", "ما مقدار العمل البدني الذي تستطيعه؟", "كثير: رفع الأشياء الثقيلة لا مشكلة", "متوسط: الوقوف والمشي كثيرًا لا مشكلة", "قليل: أفضّل العمل الخفيف", "هل هناك شيء يخص صحتك يجب أن ننتبه له؟", "لست مضطرًا لقول ذلك. الإجابة تبقى على جهازك.", "الظهر أو الركبتان", "حساسية، مثلًا من الغبار أو الطحين أو مواد التنظيف", "بشرة حساسة", "لا، لا شيء", "لا أريد أن أقول", "متى تريد أن تعمل؟", "في الصباح الباكر", "خلال النهار", "في المساء", "في الليل", "هل العمل في عطلة نهاية الأسبوع مناسب لك؟", "أحيانًا", "هل العمل بنظام المناوبات مناسب لك؟", "المناوبة تعني: أحيانًا تعمل مبكرًا وأحيانًا متأخرًا.", "كم تريد أن تعمل؟", "دوام كامل (حوالي 40 ساعة في الأسبوع)", "دوام جزئي (ساعات أقل)", "عمل صغير (Minijob) بجانب المدرسة", "هل تفضل العمل في الداخل أم في الخارج؟", "في الداخل", "في الخارج", "هل يناسبك إذا كان الجو حارًا جدًا أو باردًا جدًا في العمل؟", "مثلًا في مطبخ أو في مخزن مبرّد أو في الخارج في الشتاء.", "نعم، هذا مناسب", "لا، أفضّل لا", "هل تريد أن تقوم بتدريب مهني (Ausbildung) أم تبدأ العمل مباشرة؟", "التدريب المهني يعني: تتعلم مهنة وتحصل على راتب أثناء ذلك.", "القيام بتدريب مهني", "العمل مباشرة وكسب المال", "لا أعرف بعد", "ما المهم بالنسبة لك في العمل؟", "كسب مال جيد", "زملاء لطفاء", "وظيفة آمنة", "مساعدة الآخرين وفعل شيء مفيد", "تعلم أشياء جديدة كثيرة", "عمل قريب من بيتي", "ما هي مهنة أحلامك؟", "اكتب كلمة واحدة فقط، بالألمانية إن استطعت. مثلًا: Koch، Friseurin، Lager.", "مهنة أحلامي", "هل هناك شيء لا تريد أن تفعله أبدًا؟", "مثلًا: التنظيف، العمل ليلًا، العمل مع الحيوانات. اكتب بالألمانية إن استطعت.", "هذا لا أريده"], "uk": ["Як добре ти говориш німецькою?", "Дуже добре", "Добре", "Трохи", "Поки що слабо", "Якими мовами ти говориш?", "Обери всі мови, якими ти говориш, також німецьку.", "Німецька", "Англійська", "Китайська", "Гінді", "Іспанська", "Французька", "Арабська", "Бенгальська", "Португальська", "Російська", "Урду", "Інша мова", "У якому місті чи селі ти живеш?", "Наприклад: Нюрнберг. Це знадобиться тобі пізніше для пошуку роботи.", "Твоє місто", "Ти живеш у місті чи в сільській місцевості?", "У великому місті", "У маленькому місті", "У селі", "Як ти добираєшся на роботу?", "Можна обрати кілька відповідей.", "Пішки", "На велосипеді", "Автобусом або поїздом", "На скутері або мопеді", "На машині", "Скільки часу може тривати дорога на роботу?", "До 15 хвилин", "До 30 хвилин", "До 1 години", "У тебе є посвідчення водія на автомобіль?", "Це посвідчення водія категорії B.", "Так", "Я зараз його отримую", "Ні", "Тобі вже є 18 років?", "Деякі професії дозволені лише з 18 років.", "Який шкільний атестат у тебе є або ти зараз його отримуєш?", "Обери те, що підходить найкраще.", "Ще немає", "Атестат середньої школи (Mittelschulabschluss)", "Кваліфікаційний атестат (Quali)", "Атестат про середню освіту (Mittlere Reife)", "Не знаю", "Тобі подобається працювати руками?", "Наприклад: будувати, ремонтувати, майструвати.", "Тобі подобається розмовляти з іншими людьми?", "Також з людьми, яких ти не знаєш.", "Тобі подобається допомагати іншим людям?", "Наприклад літнім або хворим людям чи дітям.", "Тобі подобається бути з дітьми?", "Ти любиш готувати або тобі подобається їжа?", "Ти не проти прибирати й наводити лад?", "Ти не проти забруднитися на роботі?", "Наприклад фарбою, мастилом, землею або пилом.", "Тебе цікавлять машини, автомобілі або техніка?", "Тобі подобається бути на вулиці, навіть коли йде дощ або холодно?", "Ти любиш рослини й природу?", "Наприклад: квіти, дерева, сади.", "Ти любиш тварин?", "Наприклад: собак, котів, коней, корів.", "Тобі подобається продавати речі або радити іншим?", "Радити означає: ти пояснюєш комусь, що для нього добре.", "Тобі подобається керувати транспортом?", "Наприклад автомобілем, скутером або велосипедом.", "Ти любиш порядок?", "Наприклад: сортувати речі, рахувати і класти їх на правильне місце.", "Тобі подобається бути творчим?", "Наприклад: малювати, оформлювати, робити зачіски.", "Тебе цікавить мода, одяг або краса?", "Ти більше любиш працювати за комп'ютером чи практично?", "Практично означає: ти працюєш руками або часто в дорозі.", "Краще за комп'ютером", "Краще практично", "Обидва варіанти добре", "Ти більше любиш працювати в команді чи сам?", "У команді", "Сам", "Ти більше любиш щодня робити одне й те саме чи щось нове?", "Краще щодня одне й те саме", "Краще щодня щось інше", "Що ти вмієш добре?", "Бути пунктуальним", "Бути привітним", "Швидко працювати", "Точно працювати", "Добре слухати", "Залишатися спокійним у стресі", "Бути фізично витривалим і сильним", "Бути терплячим", "Бути вправним руками", "Бути надійним", "Бути готовим допомогти", "Які шкільні предмети тобі подобаються?", "Математика", "Фізкультура", "Мистецтво", "Трудове навчання або техніка", "Кулінарія або домоведення", "Біологія", "Комп'ютер або інформатика", "Економіка або офіс", "Етика, релігія або суспільствознавство", "Жоден із них", "Як добре ти рахуєш?", "Наприклад з грошима на касі.", "Так собі", "Мені це важко", "Як добре ти читаєш і пишеш німецькою?", "Як добре ти користуєшся комп'ютером?", "Наприклад: писати електронні листи, шукати в інтернеті, працювати у Word.", "Що тобі важко дається?", "Це нормально. Кожній людині щось дається важко. Можна обрати кілька відповідей.", "Довго стояти", "Довго сидіти на місці", "Рано вставати", "Багато читати й писати", "Шумне середовище", "Стрес і брак часу", "Піднімати важке", "Розмовляти з незнайомими людьми", "Нічого з цього", "Ти вже колись проходив практику?", "Де ти проходив практику?", "Супермаркет або магазин", "Кухня або ресторан", "Будинок догляду або лікарня", "Дитячий садок або ясла", "Склад", "Майстерня", "Ремесло або будівельний майданчик", "Фабрика", "Сад або ферма", "Прибирання", "Перукарня", "Готель", "Офіс або адміністрація", "Косметичний або манікюрний салон", "Квітковий магазин", "Автосалон або автомийка", "Школа або молодіжний центр", "Притулок для тварин, зоопарк або ветклініка", "Щось інше", "Тобі сподобалася практика?", "Так, дуже", "Ти вже колись підробляв?", "Наприклад мініджоб, робота на канікулах або тимчасовий підробіток.", "Скільки фізичної роботи ти можеш виконувати?", "Багато: піднімати важке – це нормально", "Середньо: багато стояти й ходити – це нормально", "Мало: краще легка робота", "Чи є щось щодо твого здоров'я, на що нам варто звернути увагу?", "Ти не мусиш про це говорити. Відповідь залишається на твоєму пристрої.", "Спина або коліна", "Алергія, напр. на пил, борошно або миючі засоби", "Чутлива шкіра", "Ні, нічого", "Не хочу говорити", "Коли ти хочеш працювати?", "Рано вранці", "Удень", "Увечері", "Уночі", "Робота у вихідні для тебе нормальна?", "Іноді", "Змінна робота для тебе нормальна?", "Зміна означає: іноді ти працюєш рано, іноді пізно.", "Скільки ти хочеш працювати?", "Повний робочий день (приблизно 40 годин на тиждень)", "Неповний робочий день (менше годин)", "Мініджоб поруч зі школою", "Ти більше хочеш працювати в приміщенні чи на вулиці?", "У приміщенні", "На вулиці", "Для тебе нормально, якщо на роботі дуже жарко або холодно?", "Наприклад на кухні, у холодильному складі або на вулиці взимку.", "Так, це нормально", "Ні, краще ні", "Ти хочеш пройти професійне навчання (Ausbildung) чи одразу працювати?", "Ausbildung означає: ти вивчаєш професію і вже отримуєш за це гроші.", "Пройти професійне навчання", "Одразу працювати й заробляти гроші", "Ще не знаю", "Що для тебе важливо на роботі?", "Добре заробляти", "Приємні колеги", "Надійне робоче місце", "Допомагати іншим, робити щось корисне", "Багато нового вчитися", "Робота близько від дому", "Яка твоя професія мрії?", "Напиши просто одне слово, якщо можеш – німецькою. Наприклад: Koch, Friseurin, Lager.", "Моя професія мрії", "Чи є щось, чого ти точно не хочеш робити?", "Наприклад: прибирати, працювати вночі, працювати з тваринами. Якщо можеш – пиши німецькою.", "Цього я не хочу"], "ru": ["Насколько хорошо ты говоришь по-немецки?", "Очень хорошо", "Хорошо", "Немного", "Пока слабо", "На каких языках ты говоришь?", "Выбери все языки, на которых ты говоришь, также немецкий.", "Немецкий", "Английский", "Китайский", "Хинди", "Испанский", "Французский", "Арабский", "Бенгальский", "Португальский", "Русский", "Урду", "Другой язык", "В каком городе или посёлке ты живёшь?", "Например: Нюрнберг. Это понадобится тебе позже для поиска работы.", "Твой город", "Ты живёшь в городе или в сельской местности?", "В большом городе", "В маленьком городе", "В деревне", "Как ты добираешься до работы?", "Можно выбрать несколько ответов.", "Пешком", "На велосипеде", "На автобусе или поезде", "На скутере или мопеде", "На машине", "Сколько времени может занимать дорога на работу?", "До 15 минут", "До 30 минут", "До 1 часа", "У тебя есть водительские права на автомобиль?", "Это водительские права категории B.", "Да", "Я сейчас их получаю", "Нет", "Тебе уже есть 18 лет?", "Некоторыми профессиями можно заниматься только с 18 лет.", "Какой школьный аттестат у тебя есть или ты его сейчас получаешь?", "Выбери то, что подходит лучше всего.", "Пока нет", "Аттестат средней школы (Mittelschulabschluss)", "Квалификационный аттестат (Quali)", "Аттестат о среднем образовании (Mittlere Reife)", "Не знаю", "Тебе нравится работать руками?", "Например: строить, ремонтировать, мастерить.", "Тебе нравится разговаривать с другими людьми?", "Также с людьми, которых ты не знаешь.", "Тебе нравится помогать другим людям?", "Например пожилым или больным людям или детям.", "Тебе нравится быть с детьми?", "Ты любишь готовить или тебе нравится еда?", "Ты не против убирать и наводить порядок?", "Ты не против испачкаться на работе?", "Например краской, маслом, землёй или пылью.", "Тебя интересуют машины, автомобили или техника?", "Тебе нравится быть на улице, даже когда идёт дождь или холодно?", "Ты любишь растения и природу?", "Например: цветы, деревья, сады.", "Ты любишь животных?", "Например: собак, кошек, лошадей, коров.", "Тебе нравится продавать вещи или советовать другим?", "Советовать значит: ты объясняешь кому-то, что для него хорошо.", "Тебе нравится водить или ездить?", "Например на машине, скутере или велосипеде.", "Ты любишь порядок?", "Например: сортировать вещи, считать и класть их на правильное место.", "Тебе нравится заниматься творчеством?", "Например: рисовать, оформлять, делать причёски.", "Тебя интересуют мода, одежда или красота?", "Ты больше любишь работать за компьютером или практически?", "Практически значит: ты работаешь руками или часто в пути.", "Лучше за компьютером", "Лучше практически", "Оба варианта хороши", "Ты больше любишь работать в команде или один?", "В команде", "Один", "Ты больше любишь каждый день делать одно и то же или что-то новое?", "Лучше каждый день одно и то же", "Лучше каждый день что-то другое", "Что ты умеешь хорошо?", "Быть пунктуальным", "Быть дружелюбным", "Быстро работать", "Работать точно", "Хорошо слушать", "Сохранять спокойствие при стрессе", "Быть физически выносливым и сильным", "Быть терпеливым", "Быть ловким руками", "Быть надёжным", "Быть отзывчивым", "Какие школьные предметы тебе нравятся?", "Математика", "Физкультура", "Искусство", "Труд или техника", "Кулинария или домоводство", "Биология", "Компьютер или информатика", "Экономика или офис", "Этика, религия или обществознание", "Ничего из этого", "Насколько хорошо ты считаешь?", "Например с деньгами на кассе.", "Так себе", "Мне это трудно", "Насколько хорошо ты читаешь и пишешь по-немецки?", "Насколько хорошо ты умеешь пользоваться компьютером?", "Например: писать электронные письма, искать в интернете, работать в Word.", "Что тебе даётся трудно?", "Это нормально. Каждому человеку что-то даётся трудно. Можно выбрать несколько ответов.", "Долго стоять", "Долго сидеть на месте", "Рано вставать", "Много читать и писать", "Шумная обстановка", "Стресс и нехватка времени", "Поднимать тяжёлое", "Разговаривать с незнакомыми людьми", "Ничего из этого", "Ты уже когда-нибудь проходил практику?", "Где ты проходил практику?", "Супермаркет или магазин", "Кухня или ресторан", "Дом престарелых или больница", "Детский сад или ясли", "Склад", "Мастерская", "Ремесло или стройка", "Фабрика", "Сад или ферма", "Уборка", "Парикмахерская", "Отель", "Офис или администрация", "Косметический или маникюрный салон", "Цветочный магазин", "Автосалон или автомойка", "Школа или молодёжный центр", "Приют для животных, зоопарк или ветклиника", "Что-то другое", "Тебе понравилась практика?", "Да, очень", "Ты уже когда-нибудь подрабатывал?", "Например мини-джоб, работа на каникулах или временная подработка.", "Сколько физической работы ты можешь выполнять?", "Много: поднимать тяжёлое – нормально", "Средне: много стоять и ходить – нормально", "Мало: лучше лёгкая работа", "Есть ли что-то о твоём здоровье, на что нам стоит обратить внимание?", "Ты не обязан об этом говорить. Ответ останется на твоём устройстве.", "Спина или колени", "Аллергия, напр. на пыль, муку или моющие средства", "Чувствительная кожа", "Нет, ничего", "Не хочу говорить", "Когда ты хочешь работать?", "Рано утром", "Днём", "Вечером", "Ночью", "Работа в выходные для тебя нормальна?", "Иногда", "Сменная работа для тебя нормальна?", "Смена значит: иногда ты работаешь рано, иногда поздно.", "Сколько ты хочешь работать?", "Полный день (примерно 40 часов в неделю)", "Неполный день (меньше часов)", "Мини-джоб параллельно со школой", "Ты больше хочешь работать в помещении или на улице?", "В помещении", "На улице", "Для тебя нормально, если на работе очень жарко или холодно?", "Например на кухне, на холодильном складе или на улице зимой.", "Да, это нормально", "Нет, лучше нет", "Ты хочешь пройти профессиональное обучение (Ausbildung) или сразу работать?", "Ausbildung значит: ты учишься профессии и уже получаешь за это деньги.", "Пройти профессиональное обучение", "Сразу работать и зарабатывать деньги", "Пока не знаю", "Что для тебя важно на работе?", "Хорошо зарабатывать", "Приятные коллеги", "Надёжное рабочее место", "Помогать другим, делать что-то полезное", "Много нового узнавать", "Работа недалеко от дома", "Какая твоя профессия мечты?", "Напиши просто одно слово, если можешь – по-немецки. Например: Koch, Friseurin, Lager.", "Моя профессия мечты", "Есть ли что-то, что ты точно не хочешь делать?", "Например: убирать, работать ночью, работать с животными. Если можешь – пиши по-немецки.", "Этого я не хочу"], "tr": ["Almancayı ne kadar iyi konuşuyorsun?", "Çok iyi", "İyi", "Biraz", "Henüz az", "Hangi dilleri konuşuyorsun?", "Konuştuğun tüm dilleri seç, Almanca da dahil.", "Almanca", "İngilizce", "Çince", "Hintçe", "İspanyolca", "Fransızca", "Arapça", "Bengalce", "Portekizce", "Rusça", "Urduca", "Başka bir dil", "Hangi şehirde ya da yerde yaşıyorsun?", "Örneğin: Nürnberg. Bunu daha sonra iş ararken kullanacaksın.", "Yaşadığın yer", "Şehirde mi yoksa kırsalda mı yaşıyorsun?", "Büyük bir şehirde", "Küçük bir şehirde", "Bir köyde", "İşe nasıl gidersin?", "Birden fazla cevap seçebilirsin.", "Yürüyerek", "Bisikletle", "Otobüs veya trenle", "Scooter veya mopedle", "Arabayla", "İşe gitmek ne kadar sürebilir?", "15 dakikaya kadar", "30 dakikaya kadar", "1 saate kadar", "Araba ehliyetin var mı?", "Bu B sınıfı ehliyettir.", "Evet", "Şu anda alıyorum", "Hayır", "18 yaşında mısın?", "Bazı meslekler ancak 18 yaşından itibaren yapılabilir.", "Hangi okul diplomana sahipsin ya da şu anda hangisini alıyorsun?", "En uygun olanı seç.", "Henüz yok", "Ortaokul diploması (Mittelschulabschluss)", "Nitelikli diploma (Quali)", "Orta öğretim diploması (Mittlere Reife)", "Bilmiyorum", "Ellerinle çalışmayı sever misin?", "Örneğin: inşa etmek, tamir etmek, el işi yapmak.", "Başka insanlarla konuşmayı sever misin?", "Tanımadığın insanlarla da.", "Başka insanlara yardım etmeyi sever misin?", "Örneğin yaşlı veya hasta insanlara ya da çocuklara.", "Çocuklarla birlikte olmayı sever misin?", "Yemek yapmayı sever misin ya da yemek seni mutlu eder mi?", "Temizlik yapmak ve toplamak senin için sorun olmaz mı?", "İşte kirlenmek senin için sorun olmaz mı?", "Örneğin boya, yağ, toprak veya tozla.", "Makinelere, arabalara veya teknolojiye ilgin var mı?", "Yağmur yağsa ya da soğuk olsa bile dışarıda olmayı sever misin?", "Bitkileri ve doğayı sever misin?", "Örneğin: çiçekler, ağaçlar, bahçeler.", "Hayvanları sever misin?", "Örneğin: köpekler, kediler, atlar, inekler.", "Bir şeyler satmayı veya başkalarına danışmanlık yapmayı sever misin?", "Danışmanlık şu demek: Birine onun için neyin iyi olduğunu açıklarsın.", "Araç kullanmayı sever misin?", "Örneğin araba, scooter veya bisiklet.", "Düzeni sever misin?", "Örneğin: eşyaları ayırmak, saymak ve doğru yere koymak.", "Yaratıcı olmayı sever misin?", "Örneğin: resim yapmak, tasarlamak, saç yapmak.", "Modaya, giyime veya güzelliğe ilgin var mı?", "Bilgisayarda mı yoksa pratik işlerde mi çalışmayı tercih edersin?", "Pratik şu demek: Ellerinle çalışırsın ya da çok hareket halindesin.", "Bilgisayarda", "Pratik işlerde", "İkisi de olur", "Takım halinde mi yoksa yalnız mı çalışmayı tercih edersin?", "Takım halinde", "Yalnız", "Her gün aynı şeyi mi yoksa yeni bir şey mi yapmayı tercih edersin?", "Her gün aynı şeyi", "Her gün farklı bir şeyi", "Neyi iyi yaparsın?", "Dakik olmak", "Kibar olmak", "Hızlı çalışmak", "Dikkatli çalışmak", "İyi dinlemek", "Stres altında sakin kalmak", "Fiziksel olarak zinde ve güçlü olmak", "Sabırlı olmak", "Ellerimle becerikli olmak", "Güvenilir olmak", "Yardımsever olmak", "Hangi okul derslerini seversin?", "Matematik", "Beden eğitimi", "Resim ve sanat", "El işi veya teknoloji", "Yemek veya ev ekonomisi", "Biyoloji", "Bilgisayar veya bilişim", "Ekonomi veya büro", "Etik, din veya sosyal bilgiler", "Hiçbiri", "Hesap yapmada ne kadar iyisin?", "Örneğin kasada parayla.", "Fena değil", "Bu bana zor geliyor", "Almanca okuma ve yazmada ne kadar iyisin?", "Bilgisayarı ne kadar iyi kullanabiliyorsun?", "Örneğin: e-posta yazmak, internette arama yapmak, Word kullanmak.", "Sana ne zor geliyor?", "Bu normal. Herkes bazı şeyleri zor bulur. Birden fazla cevap seçebilirsin.", "Uzun süre ayakta durmak", "Uzun süre hareketsiz oturmak", "Erken kalkmak", "Çok okumak ve yazmak", "Gürültülü ortam", "Stres ve zaman baskısı", "Ağır kaldırmak", "Yabancılarla konuşmak", "Hiçbiri", "Daha önce staj yaptın mı?", "Stajını nerede yaptın?", "Süpermarket veya mağaza", "Mutfak veya restoran", "Bakımevi veya hastane", "Kreş veya anaokulu", "Depo", "Atölye", "Zanaat veya şantiye", "Fabrika", "Bahçe veya çiftlik", "Temizlik", "Kuaför", "Otel", "Büro veya idare", "Güzellik veya tırnak salonu", "Çiçekçi", "Oto galeri veya oto yıkama", "Okul veya gençlik merkezi", "Hayvan barınağı, hayvanat bahçesi veya veteriner", "Başka bir yer", "Staj hoşuna gitti mi?", "Evet, çok", "Daha önce bir işte çalıştın mı?", "Örneğin mini iş, tatil işi veya geçici iş.", "Ne kadar bedensel iş yapabilirsin?", "Çok: Ağır kaldırmak sorun değil", "Orta: Çok ayakta durmak ve yürümek sorun değil", "Az: Hafif işleri tercih ederim", "Sağlığınla ilgili dikkat etmemiz gereken bir şey var mı?", "Bunu söylemek zorunda değilsin. Cevap senin cihazında kalır.", "Sırt veya dizler", "Alerji, örn. toz, un veya temizlik maddelerine", "Hassas cilt", "Hayır, hiçbir şey", "Söylemek istemiyorum", "Ne zaman çalışmak istersin?", "Sabah erken", "Gündüz", "Akşam", "Gece", "Hafta sonu çalışmak senin için uygun mu?", "Bazen", "Vardiyalı çalışmak senin için uygun mu?", "Vardiya şu demek: Bazen erken, bazen geç çalışırsın.", "Ne kadar çalışmak istersin?", "Tam zamanlı (haftada yaklaşık 40 saat)", "Yarı zamanlı (daha az saat)", "Okulun yanında mini iş", "İç mekânda mı yoksa dışarıda mı çalışmayı tercih edersin?", "İç mekânda", "Dışarıda", "İşte çok sıcak veya soğuk olması senin için uygun mu?", "Örneğin mutfakta, soğuk hava deposunda veya kışın dışarıda.", "Evet, uygun", "Hayır, tercih etmem", "Mesleki eğitim (Ausbildung) mi yapmak istersin yoksa hemen çalışmak mı?", "Ausbildung şu demek: Bir meslek öğrenirsin ve bu sırada para da alırsın.", "Mesleki eğitim yapmak", "Hemen çalışmak ve para kazanmak", "Henüz bilmiyorum", "İşte senin için ne önemli?", "İyi para kazanmak", "İyi iş arkadaşları", "Güvenli bir iş yeri", "Başkalarına yardım etmek, anlamlı bir şey yapmak", "Çok yeni şey öğrenmek", "Evime yakın bir iş", "Hayalindeki meslek ne?", "Sadece bir kelime yaz, yapabilirsen Almanca. Örneğin: Koch, Friseurin, Lager.", "Hayalimdeki meslek", "Asla yapmak istemediğin bir şey var mı?", "Örneğin: temizlik, gece çalışmak, hayvanlarla çalışmak. Yapabilirsen Almanca yaz.", "Bunu istemiyorum"], "fa": ["چقدر خوب آلمانی صحبت می‌کنی؟", "خیلی خوب", "خوب", "کمی", "هنوز کم", "به چه زبان‌هایی صحبت می‌کنی؟", "همه زبان‌هایی را که صحبت می‌کنی انتخاب کن، آلمانی را هم.", "آلمانی", "انگلیسی", "چینی", "هندی", "اسپانیایی", "فرانسوی", "عربی", "بنگالی", "پرتگالی", "روسی", "اردو", "زبان دیگر", "در کدام شهر یا محل زندگی می‌کنی؟", "مثلاً: نورنبرگ. این را بعداً برای جستجوی کار لازم داری.", "شهر تو", "در شهر زندگی می‌کنی یا در روستا؟", "در یک شهر بزرگ", "در یک شهر کوچک", "در یک روستا", "چطور به محل کار می‌روی؟", "می‌توانی چند جواب انتخاب کنی.", "پیاده", "با بایسکل (دوچرخه)", "با بس یا قطار", "با اسکوتر یا موتور کوچک", "با موتر (ماشین)", "راه رفتن به کار چقدر می‌تواند طول بکشد؟", "تا ۱۵ دقیقه", "تا ۳۰ دقیقه", "تا ۱ ساعت", "آیا لایسنس رانندگی موتر (گواهینامه) داری؟", "این لایسنس رانندگی کلاس B است.", "بله", "الان دارم می‌گیرم", "نه", "آیا ۱۸ سال یا بیشتر داری؟", "بعضی شغل‌ها را فقط از ۱۸ سالگی می‌شود انجام داد.", "چه مدرک مکتب (مدرسه) داری یا الان برای کدام مدرک درس می‌خوانی؟", "چیزی را انتخاب کن که بیشتر مناسب است.", "هنوز هیچ", "مدرک مکتب متوسطه (Mittelschulabschluss)", "مدرک واجد شرایط (Quali)", "مدرک متوسطه عالی (Mittlere Reife)", "نمی‌دانم", "آیا دوست داری با دست‌هایت کار کنی؟", "مثلاً: ساختن، ترمیم کردن، کاردستی.", "آیا دوست داری با دیگران صحبت کنی؟", "حتی با کسانی که نمی‌شناسی.", "آیا دوست داری به دیگران کمک کنی؟", "مثلاً به افراد مسن یا مریض یا کودکان.", "آیا دوست داری با کودکان باشی؟", "آیا آشپزی را دوست داری یا از غذا لذت می‌بری؟", "آیا پاک‌کاری و مرتب کردن برایت مشکلی ندارد؟", "آیا کثیف شدن در کار برایت مشکلی ندارد؟", "مثلاً با رنگ، روغن، خاک یا گرد و غبار.", "آیا به ماشین‌آلات، موترها یا تکنولوژی علاقه داری؟", "آیا دوست داری بیرون باشی، حتی وقتی باران می‌بارد یا هوا سرد است؟", "آیا گیاهان و طبیعت را دوست داری؟", "مثلاً: گل‌ها، درخت‌ها، باغ‌ها.", "آیا حیوانات را دوست داری؟", "مثلاً: سگ، پشک (گربه)، اسپ، گاو.", "آیا دوست داری چیزی بفروشی یا به دیگران مشوره بدهی؟", "مشوره دادن یعنی: به کسی توضیح می‌دهی که چه چیزی برایش خوب است.", "آیا رانندگی را دوست داری؟", "مثلاً موتر، اسکوتر یا بایسکل.", "آیا نظم و ترتیب را دوست داری؟", "مثلاً: چیزها را دسته‌بندی کنی، بشماری و در جای درست بگذاری.", "آیا دوست داری خلاق باشی؟", "مثلاً: نقاشی، طراحی، آرایش مو.", "آیا به مُد، لباس یا زیبایی علاقه داری؟", "بیشتر دوست داری با کمپیوتر کار کنی یا کار عملی؟", "عملی یعنی: با دست‌هایت کار می‌کنی یا زیاد در حرکت هستی.", "بیشتر با کمپیوتر", "بیشتر کار عملی", "هر دو خوب است", "بیشتر دوست داری در تیم کار کنی یا تنها؟", "در تیم", "تنها", "بیشتر دوست داری هر روز همان کار را بکنی یا چیز تازه؟", "بیشتر هر روز همان کار", "بیشتر هر روز چیز دیگری", "در چه چیزی خوب هستی؟", "وقت‌شناس بودن", "مهربان بودن", "سریع کار کردن", "دقیق کار کردن", "خوب گوش دادن", "آرام ماندن در فشار", "از نظر جسمی سالم و قوی بودن", "صبور بودن", "ماهر بودن با دست‌ها", "قابل اعتماد بودن", "کمک‌کننده بودن", "کدام مضمون‌های مکتب را دوست داری؟", "ریاضی", "ورزش", "هنر", "کاردستی یا تکنولوژی", "آشپزی یا خانه‌داری", "بیولوژی", "کمپیوتر یا انفورماتیک", "اقتصاد یا کار دفتری", "اخلاق، دین یا علوم اجتماعی", "هیچ‌کدام", "چقدر خوب حساب می‌کنی؟", "مثلاً با پول در صندوق.", "متوسط", "این برایم سخت است", "چقدر خوب به آلمانی می‌خوانی و می‌نویسی؟", "چقدر خوب با کمپیوتر کار می‌کنی؟", "مثلاً: ایمیل نوشتن، جستجو در انترنت، استفاده از Word.", "چه چیزی برایت سخت است؟", "این عادی است. هر کسی بعضی چیزها را سخت می‌داند. می‌توانی چند جواب انتخاب کنی.", "مدت طولانی ایستادن", "مدت طولانی آرام نشستن", "صبح زود بیدار شدن", "زیاد خواندن و نوشتن", "محیط پر سر و صدا", "فشار و کمبود وقت", "بلند کردن چیزهای سنگین", "صحبت با آدم‌های ناآشنا", "هیچ‌کدام", "آیا تا حالا کارآموزی (پراکتیکوم) کرده‌ای؟", "کارآموزی را کجا انجام دادی؟", "سوپرمارکت یا دکان", "آشپزخانه یا رستوران", "خانه سالمندان یا شفاخانه", "کودکستان یا مهدکودک", "گدام (انبار)", "ورکشاپ (کارگاه)", "کار دستی یا ساختمان‌سازی", "فابریکه (کارخانه)", "باغ یا مزرعه", "پاک‌کاری", "آرایشگاه", "هوتل", "دفتر یا اداره", "سالون زیبایی یا ناخن", "گل‌فروشی", "نمایشگاه موتر یا موترشویی", "مکتب یا مرکز جوانان", "پناهگاه حیوانات، باغ‌وحش یا داکتر حیوانات", "چیز دیگر", "آیا کارآموزی را دوست داشتی؟", "بله، خیلی", "آیا تا حالا کار کرده‌ای؟", "مثلاً مینی‌جاب، کار در تعطیلات یا کار موقت.", "چقدر کار جسمی می‌توانی انجام بدهی؟", "زیاد: بلند کردن چیزهای سنگین مشکلی ندارد", "متوسط: زیاد ایستادن و راه رفتن مشکلی ندارد", "کم: کار سبک را ترجیح می‌دهم", "آیا چیزی در مورد صحتت هست که باید به آن توجه کنیم؟", "مجبور نیستی بگویی. جواب روی دستگاه خودت می‌ماند.", "کمر یا زانو", "حساسیت (آلرژی)، مثلاً به گرد و غبار، آرد یا مواد پاک‌کننده", "پوست حساس", "نه، هیچ", "نمی‌خواهم بگویم", "چه وقت می‌خواهی کار کنی؟", "صبح زود", "در طول روز", "عصر یا شام", "شب", "آیا کار در آخر هفته برایت مناسب است؟", "گاهی", "آیا کار شیفتی برایت مناسب است؟", "شیفت یعنی: گاهی صبح زود کار می‌کنی، گاهی دیر.", "چقدر می‌خواهی کار کنی؟", "تمام‌وقت (حدود ۴۰ ساعت در هفته)", "نیمه‌وقت (ساعت‌های کمتر)", "مینی‌جاب در کنار مکتب", "بیشتر دوست داری داخل کار کنی یا بیرون؟", "داخل", "بیرون", "آیا برایت مشکلی نیست اگر در کار هوا خیلی گرم یا سرد باشد؟", "مثلاً در آشپزخانه، در سردخانه یا بیرون در زمستان.", "بله، مشکلی نیست", "نه، ترجیح نمی‌دهم", "می‌خواهی آموزش حرفه‌ای (Ausbildung) ببینی یا مستقیم کار کنی؟", "Ausbildung یعنی: یک شغل را یاد می‌گیری و همزمان پول هم می‌گیری.", "آموزش حرفه‌ای دیدن", "مستقیم کار کردن و پول درآوردن", "هنوز نمی‌دانم", "در کار چه چیزی برایت مهم است؟", "پول خوب درآوردن", "همکاران مهربان", "یک کار مطمئن", "کمک به دیگران، انجام دادن کار مفید", "یاد گرفتن چیزهای تازه زیاد", "کار نزدیک خانه‌ام", "شغل رویایی تو چیست؟", "فقط یک کلمه بنویس، اگر می‌توانی به آلمانی. مثلاً: Koch، Friseurin، Lager.", "شغل رویایی من", "آیا کاری هست که اصلاً نمی‌خواهی انجام بدهی؟", "مثلاً: پاک‌کاری، کار در شب، کار با حیوانات. اگر می‌توانی به آلمانی بنویس.", "این را نمی‌خواهم"]};
+const TR_INTRO={"en": "The questions are in German. The translation is shown below each question. „Weiter“ means: next question. „Zurück“ means: previous question. „Überspringen“ means: skip. At the end you get 10 jobs that suit you.", "ar": "الأسئلة باللغة الألمانية. الترجمة مكتوبة تحت كل سؤال. «Weiter» تعني: السؤال التالي. «Zurück» تعني: السؤال السابق. «Überspringen» تعني: تخطي السؤال. في النهاية تحصل على 10 مهن تناسبك.", "uk": "Питання німецькою мовою. Під кожним питанням є переклад. «Weiter» означає: наступне питання. «Zurück» означає: попереднє питання. «Überspringen» означає: пропустити. Наприкінці ти отримаєш 10 професій, які тобі підходять.", "ru": "Вопросы на немецком языке. Под каждым вопросом есть перевод. «Weiter» значит: следующий вопрос. «Zurück» значит: предыдущий вопрос. «Überspringen» значит: пропустить. В конце ты получишь 10 профессий, которые тебе подходят.", "tr": "Sorular Almancadır. Her sorunun altında çevirisi var. „Weiter“ şu demek: sonraki soru. „Zurück“ şu demek: önceki soru. „Überspringen“ şu demek: atla. Sonunda sana uygun 10 meslek görürsün.", "fa": "سوال‌ها به زبان آلمانی هستند. ترجمه زیر هر سوال نوشته شده است. «Weiter» یعنی: سوال بعدی. «Zurück» یعنی: سوال قبلی. «Überspringen» یعنی: رد کردن. در آخر ۱۰ شغل می‌بینی که برایت مناسب است."};
+const TR={}; Object.keys(TR_SRC).forEach(l=>{TR[l]={}; TR_DE.forEach((d,i)=>{TR[l][d]=TR_SRC[l][i];});});
+let L='de';
+function langInfo(){return LANGS.find(x=>x.c===L)||LANGS[0];}
+function tr(t){ if(L==='de'||!t) return ''; return (TR[L]&&TR[L][t])||''; }
+function trAttr(){const li=langInfo(); return `lang="${li.c}" dir="${li.rtl?'rtl':'ltr'}"`;}
+
+/* ---------- Zustand ---------- */
+const KEY='bvj-berufscheck-v1';
+let A={}, cur=null, screen='start';
+const app=document.getElementById('app');
+function save(){try{localStorage.setItem(KEY,JSON.stringify({A,cur,L}));}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
+function clearSave(){try{localStorage.removeItem(KEY);}catch(e){}}
+function visible(){return Q.filter(q=>!q.showIf||q.showIf(A));}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function speak(text){try{const s=window.speechSynthesis; if(!s) return; s.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='de-DE'; u.rate=.9; s.speak(u);}catch(e){}}
+function canSpeak(){try{return 'speechSynthesis' in window;}catch(e){return false;}}
+
+/* ---------- Startseite ---------- */
+function renderStart(){
+  screen='start';
+  const saved=load(); const hasSaved=saved&&saved.A&&Object.keys(saved.A).length>0;
+  app.innerHTML=`
+    <h1>Welcher Beruf <span class="mark">passt zu mir?</span></h1>
+    <p>Du beantwortest bis zu ${Q.length} kurze Fragen. Das dauert etwa 15 bis 20 Minuten.</p>
+    <p>Es gibt keine falschen Antworten. Am Ende bekommst du dein Ergebnisblatt mit 10 Berufen, die zu dir passen.</p>
+    <div class="langpick">
+      <p class="lp-label">Brauchst du eine Übersetzung? <span class="muted">Translation?</span></p>
+      <div class="lp-row">${LANGS.map(x=>`<button class="lp ${x.c===L?'on':''}" data-l="${x.c}" aria-pressed="${x.c===L}" lang="${x.c}">${x.n}</button>`).join('')}</div>
+      ${L!=='de'?`<p class="tr" ${trAttr()}>${esc(TR_INTRO[L]||'')}</p>`:''}
+    </div>
+    <ul class="feat">
+      ${canSpeak()?'<li><span class="em" aria-hidden="true">🔊</span><span>Du kannst dir jede Frage vorlesen lassen.</span></li>':''}
+      <li><span class="em" aria-hidden="true">⏭️</span><span>Du kannst Fragen überspringen.</span></li>
+      <li><span class="em" aria-hidden="true">🔒</span><span>Deine Antworten bleiben auf diesem Gerät.</span></li>
+    </ul>
+    <div class="row">
+      ${hasSaved?'<button class="btn primary" id="resume">Weitermachen</button><button class="btn ghost" id="fresh">Neu anfangen</button>':'<button class="btn primary" id="go">Los geht\'s</button>'}
+    </div>`;
+  app.querySelectorAll('.lp').forEach(b=>b.onclick=()=>{L=b.dataset.l; document.getElementById('lang').value=L; save(); renderStart();});
+  const go=document.getElementById('go'); if(go) go.onclick=()=>{A={};cur=Q[0].id;renderQ();};
+  const r=document.getElementById('resume'); if(r) r.onclick=()=>{A=saved.A||{};cur=saved.cur;if(cur==='__result') renderResult(); else renderQ();};
+  const f=document.getElementById('fresh'); if(f) f.onclick=()=>{clearSave();A={};cur=Q[0].id;renderQ();};
+}
+
+/* ---------- Frage ---------- */
+function renderQ(){
+  screen='q';
+  const V=visible(); let i=V.findIndex(q=>q.id===cur); if(i<0){i=0;cur=V[0].id;}
+  const q=V[i]; const val=A[q.id];
+  const pct=Math.round(i/V.length*100);
+  let body='';
+  if(q.type==='single'||q.type==='multi'){
+    body='<div class="opts" role="group" aria-label="Antworten">'+q.opts.map(o=>{
+      const on=q.type==='single'?val===o.v:has(val,o.v);
+      const ot=tr(o.t);
+      return `<button class="opt ${q.type}" data-v="${o.v}" aria-pressed="${on}"><span class="em" aria-hidden="true">${o.e||''}</span><span class="ot">${esc(o.t)}${ot?`<span class="otr" ${trAttr()}>${esc(ot)}</span>`:''}</span><span class="box" aria-hidden="true">${on?'✓':''}</span></button>`;
+    }).join('')+'</div>';
+  } else {
+    body=`<input type="text" id="txt" placeholder="${esc(q.ph||'')}" value="${esc(val||'')}" autocomplete="off" aria-label="${esc(q.q)}">`;
+  }
+  const canNext=q.type==='text'||(q.type==='single'?!!val:has(val,val&&val[0]));
+  app.innerHTML=`
+    <div class="part"><span>Teil ${q.teil+1} von 5: ${TEILE[q.teil]}</span><span>Frage ${i+1} von ${V.length}</span></div>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div style="width:${Math.max(pct,2)}%"></div></div>
+    <div class="qhead"><span class="qem" aria-hidden="true">${q.e}</span><div>
+      <h2 class="q" id="qh" tabindex="-1">${esc(q.q)}</h2>
+      ${tr(q.q)?`<p class="tr" ${trAttr()}>${esc(tr(q.q))}</p>`:''}
+      ${q.hint?`<p class="hint">${esc(q.hint)}</p>`:''}
+      ${q.hint&&tr(q.hint)?`<p class="hint trh" ${trAttr()}>${esc(tr(q.hint))}</p>`:''}
+      ${canSpeak()?'<button class="speak" id="sp"><span aria-hidden="true">🔊</span> Vorlesen</button>':''}
+    </div></div>
+    ${body}
+    <div class="nav">
+      <button class="btn ghost" id="back">Zurück</button>
+      <button class="skip" id="skip">Überspringen</button>
+      <button class="btn primary" id="next" ${canNext?'':'disabled'}>${i===V.length-1?'Ergebnis zeigen':'Weiter'}</button>
+    </div>`;
+  const h=document.getElementById('qh'); try{h.focus({preventScroll:true});}catch(e){}
+  const sp=document.getElementById('sp'); if(sp) sp.onclick=()=>speak(q.q+'. '+(q.hint||'')+' '+(q.opts?q.opts.map(o=>o.t).join('. '):''));
+  document.getElementById('back').onclick=()=>{ if(i===0){renderStart();} else {cur=V[i-1].id;save();renderQ();} };
+  document.getElementById('skip').onclick=()=>{ if(q.type==='text') A[q.id]=''; else delete A[q.id]; goNext(q.id); };
+  document.getElementById('next').onclick=()=>{ if(q.type==='text') A[q.id]=document.getElementById('txt').value.trim(); goNext(q.id); };
+  if(q.type==='text'){
+    const t=document.getElementById('txt');
+    t.addEventListener('keydown',e=>{if(e.key==='Enter'){A[q.id]=t.value.trim();goNext(q.id);}});
+  } else {
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const v=b.dataset.v;
+      if(q.type==='single'){
+        A[q.id]=v; save(); updateOpts(q); setTimeout(()=>{ if(cur===q.id) goNext(q.id); },280);
+      } else {
+        const o=q.opts.find(x=>x.v===v); let arr=Array.isArray(A[q.id])?A[q.id].slice():[];
+        if(arr.includes(v)) arr=arr.filter(x=>x!==v);
+        else { if(o.ex) arr=[v]; else { arr=arr.filter(x=>!q.opts.find(y=>y.v===x&&y.ex)); arr.push(v);} }
+        if(arr.length) A[q.id]=arr; else delete A[q.id];
+        save(); updateOpts(q);
+      }
+    });
+  }
+}
+function updateOpts(q){
+  const val=A[q.id];
+  app.querySelectorAll('.opt').forEach(b=>{
+    const on=q.type==='single'?val===b.dataset.v:has(val,b.dataset.v);
+    b.setAttribute('aria-pressed',on); b.querySelector('.box').textContent=on?'✓':'';
+  });
+  document.getElementById('next').disabled=q.type==='single'?!val:!(Array.isArray(val)&&val.length);
+}
+function goNext(id){
+  try{window.speechSynthesis&&window.speechSynthesis.cancel();}catch(e){}
+  const V=visible(); const i=V.findIndex(q=>q.id===id);
+  if(i<V.length-1){cur=V[i+1].id;save();renderQ();window.scrollTo(0,0);}
+  else {cur='__result';save();renderResult();window.scrollTo(0,0);}
+}
+
+/* ---------- Ergebnis ---------- */
+function answerText(q,v){
+  if(v==null||v==='') return null;
+  if(q.type==='text') return v;
+  if(q.type==='single'){const o=q.opts.find(o=>o.v===v);return o?o.t:v;}
+  return v.map(x=>{const o=q.opts.find(o=>o.v===x);return o?o.t:x;});
+}
+function buildJSON(res){
+  const ort=(A.ort||'').trim();
+  const beispiel=res.ranked[0]?res.ranked[0].j.s:'Lagerhelfer';
+  return {
+    fragen_liste:Q.map(q=>({id:q.id,teil:TEILE[q.teil],frage:q.q,typ:q.type==='single'?'auswahl':q.type==='multi'?'mehrfachauswahl':'offene_antwort',optionen:q.opts?q.opts.map(o=>o.t):null,...(q.showIf?{bedingung:'Nur wenn: Praktikum = Ja'}:{})})),
+    antworten:visible().map(q=>({frage_id:q.id,frage:q.q,antwort:answerText(q,A[q.id])})).filter(a=>a.antwort!=null&&!(Array.isArray(a.antwort)&&!a.antwort.length)),
+    berufsvorschlaege:res.ranked.map(r=>({beruf:r.j.n,begruendung:r.begr,passung_prozent:r.pct,berufsfeld:FELDER[r.j.fam],aehnliche_berufe:r.sim.map(o=>o.n)})),
+    weitere_berufe:res.more.map(r=>({beruf:r.j.n,passung_prozent:r.pct,berufsfeld:FELDER[r.j.fam]})),
+    berufsfelder:res.fields.map(f=>({berufsfeld:f.name,passung_prozent:f.pct})),
+    hinweis_stellensuche:`Such im Internet nach deinem Beruf und deinem Ort. Schreib zum Beispiel: „${beispiel} ${ort||'Nürnberg'}“. Gute Seiten sind die Jobbörse der Arbeitsagentur (arbeitsagentur.de) und Indeed. Hilfreiche Suchwörter sind: Helfer, Aushilfe, ohne Ausbildung, Quereinsteiger oder Ausbildung 2027. (m/w/d) in einer Anzeige heißt: Die Stelle ist für alle. Du kannst auch direkt im Laden oder in der Firma fragen. Die Berufsberatung der Agentur für Arbeit hilft dir kostenlos.`
+  };
+}
+function jobsucheUrl(j,ort){
+  const p=new URLSearchParams({angebotsart:j.typ==='A'?'4':'1',was:j.s}); if(ort) p.set('wo',ort);
+  return 'https://www.arbeitsagentur.de/jobsuche/suche?'+p.toString();
+}
+function renderResult(){
+  screen='result';
+  const res=evaluate(A); const ort=(A.ort||'').trim();
+  const datum=new Date().toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+  const fitLabel=p=>p>=80?'Passt sehr gut':p>=60?'Passt gut':'Passt auch';
+  const items=res.ranked.map((r,i)=>{
+    const j=r.j; const phrase=j.typ==='A'?`${j.s} Ausbildung ${ort}`:`${j.s} ${ort}`;
+    return `<li class="job">
+      <div class="rank" aria-label="Platz ${i+1}">${i+1}</div>
+      <div>
+        <h3>${esc(j.n)}</h3>
+        <div class="fitrow"><div class="fitbar" aria-hidden="true"><div style="width:${r.pct}%"></div></div><strong>${r.pct} % Passung</strong></div>
+        <div class="tags"><span class="tag fit">${fitLabel(r.pct)}</span><span class="tag">${FE[j.fam]} ${esc(FELDER[j.fam])}</span><span class="tag">${esc(j.info)}</span></div>
+        <p class="why">${esc(r.begr)}</p>
+        <p class="what">Was machst du da? ${esc(j.w)}</p>
+        ${(r.notes.concat(j.hinweis?[j.hinweis]:[])).map(n=>`<p class="note">ℹ️ ${esc(n)}</p>`).join('')}
+        <p class="sim"><strong>Ähnliche Berufe:</strong> ${r.sim.map(o=>esc(o.n)).join(', ')}</p>
+        <a class="search" href="${jobsucheUrl(j,ort)}" target="_blank" rel="noopener">🔎 Stellen suchen: ${esc(phrase.trim())}</a>
+      </div></li>`;
+  }).join('');
+  const fieldsHtml=res.fields.slice(0,6).map(f=>`<li><span class="fe" aria-hidden="true">${f.e}</span><span class="fn">${esc(f.name)}</span><strong>${f.pct} %</strong><div class="fitbar" aria-hidden="true"><div style="width:${f.pct}%"></div></div></li>`).join('');
+  const moreHtml=res.more.map((r,i)=>`<li><span class="mr">${i+11}.</span><span class="mn">${esc(r.j.n)}<br><small class="muted">${FE[r.j.fam]} ${esc(FELDER[r.j.fam])} · ${esc(r.j.info)}</small></span><strong>${r.pct} %</strong></li>`).join('');
+  const dreamBox=res.traum&&!res.dreamHit?`<div class="dream"><strong>Dein Traumberuf: ${esc(res.traum)}</strong><br>Dieser Beruf ist nicht in unserer Liste. Das ist nicht schlimm! Sprich mit deiner Lehrkraft oder der Berufsberatung darüber. Vielleicht gibt es einen Weg dorthin.</div>`:'';
+  const beispiel=res.ranked[0]?res.ranked[0].j.s:'Lagerhelfer';
+  const json=JSON.stringify(buildJSON(res),null,2);
+  app.innerHTML=`
+    <div class="sheet-head"><h1 style="margin:0">Dein Ergebnisblatt</h1><span class="muted">${datum}</span></div>
+    <p class="muted" style="margin-top:8px">Diese 10 Berufe passen zu deinen Antworten. Platz 1 passt am besten. Die Prozentzahl zeigt, wie gut der Beruf zu deinen Antworten passt. Sie ist eine Schätzung, keine Note.</p>
+    <section class="pdfbox">
+      <h2>Ergebnis an deine Lehrkraft schicken</h2>
+      <label for="name">Dein Name</label>
+      <input type="text" id="name" placeholder="Vorname und Nachname" value="${esc(A._name||'')}" autocomplete="name">
+      <button class="btn primary" id="pdf">📄 Als PDF speichern</button>
+      <p class="muted" id="pdfmsg">Danach schickst du die PDF-Datei in Teams an deine Lehrkraft.</p>
+    </section>
+    ${dreamBox}
+    <ol class="jobs">${items}</ol>
+    <section class="extra">
+      <h2>Deine stärksten Berufsfelder</h2>
+      <p class="muted">Ein Berufsfeld ist eine Gruppe von ähnlichen Berufen.</p>
+      <ul class="fields">${fieldsHtml}</ul>
+    </section>
+    ${moreHtml?`<section class="extra">
+      <h2>Diese Berufe passen auch</h2>
+      <p class="muted">Schau dir diese Berufe auch an. Vielleicht ist etwas für dich dabei.</p>
+      <ol class="more">${moreHtml}</ol>
+    </section>`:''}
+    <section class="box-info">
+      <h2>So suchst du nach Stellenanzeigen</h2>
+      <ol>
+        <li>Nimm einen Beruf von deiner Liste. Fang mit Platz 1 an.</li>
+        <li>Öffne die <a href="https://www.arbeitsagentur.de/jobsuche/" target="_blank" rel="noopener">Jobbörse der Arbeitsagentur</a> oder Google.</li>
+        <li>Schreib den Beruf und deinen Ort. Zum Beispiel: „${esc(beispiel)} ${esc(ort||'Nürnberg')}“.</li>
+        <li>Achte auf diese Wörter: Helfer, Aushilfe, ohne Ausbildung, Quereinsteiger, Ausbildung 2027.</li>
+        <li>In Anzeigen steht oft (m/w/d). Das heißt: Die Stelle ist für alle.</li>
+        <li>Frag auch direkt im Laden oder in der Firma. Das klappt oft gut!</li>
+        <li>Hol dir Hilfe: Die Berufsberatung der Agentur für Arbeit ist kostenlos. Auch deine Lehrkraft hilft dir.</li>
+      </ol>
+    </section>
+    <details>
+      <summary>Für Lehrkräfte: Ergebnis als JSON</summary>
+      <p class="muted" style="margin:10px 0 0;font-size:.9rem">Enthält alle Fragen, die Antworten, die 10 Vorschläge und den Hinweis zur Stellensuche. Achtung: Die Antworten können persönliche Angaben enthalten.</p>
+      <textarea id="json" readonly>${esc(json)}</textarea>
+      <div class="row" style="margin-top:10px"><button class="btn ghost" id="copy">JSON kopieren</button></div>
+    </details>
+    <div class="row foot">
+      <button class="btn ghost" id="edit">Antworten ändern</button>
+      <button class="btn ghost" id="restart">Neu anfangen</button>
+    </div>`;
+  document.getElementById('copy').onclick=async e=>{
+    const ta=document.getElementById('json'); let ok=false;
+    try{await navigator.clipboard.writeText(ta.value);ok=true;}catch(err){try{ta.select();ok=document.execCommand('copy');}catch(e2){}}
+    e.target.textContent=ok?'Kopiert ✓':'Bitte Text markieren und kopieren';
+  };
+  const nm=document.getElementById('name'); nm.oninput=()=>{A._name=nm.value;save();};
+  document.getElementById('pdf').onclick=()=>savePdf(res);
+  document.getElementById('edit').onclick=()=>{cur=Q[0].id;save();renderQ();window.scrollTo(0,0);};
+  const rs=document.getElementById('restart'); let armed=false;
+  rs.onclick=()=>{ if(!armed){armed=true;rs.textContent='Wirklich alles löschen?';return;} clearSave();A={};renderStart();window.scrollTo(0,0); };
+  try{document.querySelector('h1').setAttribute('tabindex','-1');document.querySelector('h1').focus({preventScroll:true});}catch(e){}
+}
+
+/* ---------- PDF ---------- */
+function pdfText(t){return String(t).replace(/[^\x20-\x7E\u00A0-\u00FF\u2013\u2014\u201E\u201C\u201D\u2018\u2019\u2022\u20AC]/g,'').replace(/\s+/g,' ').trim();}
+function makePdf(res,name){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'mm',format:'a4'});
+  const L=18,W=174,INK=[19,49,92],MUT=[79,97,128]; let y=22;
+  const block=(txt,{size=11,style='normal',color=INK,x=L,w=W,gap=1.5}={})=>{
+    doc.setFont('helvetica',style);doc.setFontSize(size);doc.setTextColor(...color);
+    const lines=doc.splitTextToSize(pdfText(txt),w); const lh=size*0.45;
+    lines.forEach(l=>{ if(y+lh>282){doc.addPage();y=20;} doc.text(l,x,y); y+=lh; }); y+=gap;
+  };
+  const ort=(A.ort||'').trim();
+  const datum=new Date().toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+  block('Mein Ergebnisblatt',{size:22,style:'bold',gap:1});
+  block('Berufs-Check für BVJ und BIK',{size:11,color:MUT,gap:5});
+  block('Name: '+(name||'–'),{size:12,style:'bold',gap:1});
+  block('Datum: '+datum+(ort?'     Wohnort: '+ort:''),{size:11,color:MUT,gap:4});
+  doc.setDrawColor(...INK);doc.setLineWidth(0.4);doc.line(L,y,L+W,y); y+=7;
+  block('Diese 10 Berufe passen zu meinen Antworten. Platz 1 passt am besten.',{size:11,gap:5});
+  res.ranked.forEach((r,i)=>{
+    const j=r.j; if(y>255){doc.addPage();y=20;}
+    const top=y;
+    doc.setFillColor(255,210,63);doc.circle(L+4.5,top-1.5,4.5,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...INK);
+    doc.text(String(i+1),L+4.5,top,{align:'center'});
+    block(j.n,{size:13,style:'bold',x:L+13,w:W-13,gap:0.5});
+    block('Passung: '+r.pct+' %   |   '+FELDER[j.fam]+'   |   '+j.info,{size:10,color:MUT,x:L+13,w:W-13,gap:1.5});
+    block(r.begr,{size:11,x:L+13,w:W-13,gap:1});
+    block('Was machst du da? '+j.w,{size:10,color:MUT,x:L+13,w:W-13,gap:1});
+    r.notes.concat(j.hinweis?[j.hinweis]:[]).forEach(n=>block('Hinweis: '+n,{size:10,color:MUT,x:L+13,w:W-13,gap:1}));
+    block('Ähnliche Berufe: '+r.sim.map(o=>o.n).join(', '),{size:10,x:L+13,w:W-13,gap:1});
+    block('Suchwort: '+(j.typ==='A'?j.s+' Ausbildung':j.s)+(ort?' '+ort:''),{size:10,style:'bold',x:L+13,w:W-13,gap:5});
+  });
+  if(y>235){doc.addPage();y=20;}
+  y+=2; block('Meine stärksten Berufsfelder',{size:14,style:'bold',gap:2});
+  res.fields.slice(0,6).forEach(f=>block(f.name+': '+f.pct+' %',{size:11,gap:1}));
+  if(res.more.length){
+    if(y>235){doc.addPage();y=20;}
+    y+=4; block('Diese Berufe passen auch',{size:14,style:'bold',gap:2});
+    res.more.forEach((r,i)=>block((i+11)+'. '+r.j.n+' ('+r.pct+' %, '+r.j.info+')',{size:11,gap:1}));
+  }
+  if(y>230){doc.addPage();y=20;}
+  y+=4; block('So suchst du nach Stellenanzeigen',{size:14,style:'bold',gap:2});
+  ['Nimm einen Beruf von deiner Liste. Fang mit Platz 1 an.',
+   'Öffne die Jobbörse der Arbeitsagentur (arbeitsagentur.de/jobsuche) oder Google.',
+   'Schreib den Beruf und deinen Ort. Zum Beispiel: „'+(res.ranked[0]?res.ranked[0].j.s:'Lagerhelfer')+' '+(ort||'Nürnberg')+'“.',
+   'Achte auf diese Wörter: Helfer, Aushilfe, ohne Ausbildung, Quereinsteiger, Ausbildung 2027.',
+   '(m/w/d) in einer Anzeige heißt: Die Stelle ist für alle.',
+   'Frag auch direkt im Laden oder in der Firma.',
+   'Die Berufsberatung der Agentur für Arbeit hilft dir kostenlos.'
+  ].forEach((t,i)=>block((i+1)+'. '+t,{size:11,gap:1.2}));
+  const n=doc.getNumberOfPages();
+  for(let p=1;p<=n;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...MUT);doc.text('Berufs-Check – Seite '+p+' von '+n,L+W,290,{align:'right'});}
+  return doc;
+}
+async function savePdf(res){
+  const msg=t=>{document.getElementById('pdfmsg').textContent=t;};
+  const name=(document.getElementById('name').value||'').trim();
+  if(!name){msg('Bitte schreib zuerst deinen Namen in das Feld.');document.getElementById('name').focus();return;}
+  if(!window.jspdf){msg('Das PDF geht gerade nicht. Prüfe deine Internetverbindung und lade die Seite neu.');return;}
+  let doc; try{doc=makePdf(res,name);}catch(e){msg('Das PDF konnte nicht erstellt werden. Bitte versuch es nochmal.');return;}
+  const fn='Berufs-Check_'+name.replace(/[^\p{L}\p{N}]+/gu,'_').replace(/^_|_$/g,'')+'.pdf';
+  const inViewer=!!(window.claude&&window.claude.use);
+  if(inViewer){
+    let dl=null; try{dl=await window.claude.use('downloads');}catch(e){}
+    if(!dl){msg('Speichern geht hier leider nicht. Frag deine Lehrkraft.');return;}
+    try{await dl.save({filename:fn,data:doc.output('blob')}); msg('Gespeichert! Öffne jetzt Teams und schick die Datei „'+fn+'“ an deine Lehrkraft.');}
+    catch(e){const c=e&&e.code; msg(c==='declined'?'Nicht gespeichert. Klick nochmal auf den Knopf, wenn du das PDF willst.':c==='rate_limited'?'Einen Moment bitte, dann nochmal klicken.':'Speichern geht hier leider nicht. Frag deine Lehrkraft.');}
+  } else {
+    try{doc.save(fn); msg('Das PDF ist in deinem Download-Ordner. Öffne jetzt Teams und schick die Datei „'+fn+'“ an deine Lehrkraft.');}catch(e){msg('Speichern geht hier leider nicht. Frag deine Lehrkraft.');}
+  }
+}
+
+(function initLang(){
+  const saved=load(); if(saved&&saved.L&&LANGS.some(x=>x.c===saved.L)) L=saved.L;
+  const sel=document.getElementById('lang');
+  sel.innerHTML=LANGS.map(x=>`<option value="${x.c}" ${x.c===L?'selected':''}>${x.n}</option>`).join('');
+  sel.onchange=()=>{L=sel.value; save(); rerender();};
+})();
+function rerender(){ if(screen==='result') renderResult(); else if(screen==='q') renderQ(); else renderStart(); }
+renderStart();
+</script>
+</body>
+</html>
